@@ -96,7 +96,7 @@ export function DotPattern({
     const totalDots = cols * rows
 
     // Pre-generate random values for animation
-    // eslint-disable-next-line react-hooks/purity
+     
     const randomDelays: number[] = []
     const randomDurations: number[] = []
     for (let i = 0; i < totalDots; i++) {

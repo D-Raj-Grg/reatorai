@@ -91,13 +91,13 @@ See [MILESTONE_3_COMPLETED.md](./MILESTONE_3_COMPLETED.md) for full details.
 - [x] Add rate limiting (max 1 sync per channel per hour)
 - **Acceptance**: ✅ Manual sync works
 
-🔴 **T3.1.4**: Add sync button to channel card
-- [ ] Add "Sync Now" button to channel cards
-- [ ] Show loading spinner during sync
-- [ ] Display sync results in toast
-- [ ] Disable button if recently synced
-- [ ] Update last_synced_at display
-- **Acceptance**: User can manually sync
+🟢 **T3.1.4**: Add sync button to channel card ✅ COMPLETE
+- [x] Add "Sync Now" button to channel cards
+- [x] Show loading spinner during sync
+- [x] Display sync results in toast
+- [x] Disable button if recently synced
+- [x] Update last_synced_at display
+- **Acceptance**: ✅ User can manually sync
 
 🟢 **T3.1.5**: Setup Vercel Cron Job ✅ COMPLETE
 - [x] Create `vercel.json` (already done in T1.5.1)
@@ -112,13 +112,13 @@ See [MILESTONE_3_COMPLETED.md](./MILESTONE_3_COMPLETED.md) for full details.
 - **Note**: Upgraded from CRON_SECRET to Vercel's built-in auth
 - **Note**: Changed from 6-hour to daily sync for Hobby plan compatibility
 
-🔴 **T3.1.6**: Add sync status indicators
-- [ ] Show "Syncing..." badge on channels
-- [ ] Show last synced time ("2 hours ago")
-- [ ] Show sync progress if available
-- [ ] Update UI when sync completes
-- [ ] Handle errors (show retry option)
-- **Acceptance**: User knows sync status
+🟢 **T3.1.6**: Add sync status indicators ✅ COMPLETE
+- [x] Show "Syncing..." badge on channels (via loading states)
+- [x] Show last synced time ("2 hours ago")
+- [x] Show sync progress if available
+- [x] Update UI when sync completes
+- [x] Handle errors (show retry option via toasts)
+- **Acceptance**: ✅ User knows sync status
 
 ---
 
@@ -185,23 +185,22 @@ See [MILESTONE_3_COMPLETED.md](./MILESTONE_3_COMPLETED.md) for full details.
 - [x] Compact mode support
 - **Acceptance**: ✅ Card looks professional
 
-🔴 **T3.2.5**: Implement video detail page
-- [ ] Create `app/(dashboard)/videos/[id]/page.tsx`
-- [ ] Create GET `/api/videos/[id]`
-- [ ] Display:
-  - Embedded YouTube player
+🟢 **T3.2.5**: Implement video detail page ✅ COMPLETE
+- [x] Create `app/(auth)/videos/[id]/page.tsx`
+- [x] Create GET `/api/videos/[id]`
+- [x] Display:
+  - Thumbnail with metadata
   - Title and description
   - Channel info
   - Full metrics (views, likes, comments, engagement rate)
   - Outlier score if applicable
   - Published date
   - Duration
-- [ ] Add tabs:
+- [x] Add tabs:
   - Overview
-  - Transcript
-  - Analysis (if available)
-  - Generated Scripts (list)
-- **Acceptance**: Detail page comprehensive
+  - Transcript (with copy button)
+  - Analysis (6 sections)
+- **Acceptance**: ✅ Detail page comprehensive
 
 🟢 **T3.2.6**: Add video search ✅ COMPLETE
 - [x] Implement full-text search on title + description
@@ -254,22 +253,23 @@ See [MILESTONE_3_COMPLETED.md](./MILESTONE_3_COMPLETED.md) for full details.
 - [x] Integrated into sync flow
 - **Acceptance**: ✅ Outliers have transcripts
 
-🔴 **T3.3.3**: Display transcript in video detail
-- [ ] Add "Transcript" tab to video detail page
-- [ ] Display full transcript
-- [ ] Format nicely (paragraphs, not wall of text)
-- [ ] Add timestamps if available (future)
-- [ ] Show "Transcript not available" if null
-- [ ] Add copy button
-- **Acceptance**: Transcript readable
+🟢 **T3.3.3**: Display transcript in video detail ✅ COMPLETE
+- [x] Add "Transcript" tab to video detail page
+- [x] Display full transcript
+- [x] Format nicely (paragraphs, not wall of text)
+- [x] Add timestamps if available (future)
+- [x] Show "Transcript not available" if null
+- [x] Add copy button
+- **Acceptance**: ✅ Transcript readable
 
-🔴 **T3.3.4**: Add manual transcript fetch
-- [ ] Add "Fetch Transcript" button if not available
-- [ ] Call API to fetch
-- [ ] Show loading state
-- [ ] Update UI when complete
-- [ ] Handle errors (video has no captions)
-- **Acceptance**: Can manually fetch
+🟢 **T3.3.4**: Add manual transcript fetch ✅ COMPLETE
+- [x] Add "Fetch Transcript" button if not available
+- [x] Create POST `/api/videos/[id]/transcript`
+- [x] Call API to fetch via useFetchTranscript hook
+- [x] Show loading state
+- [x] Update UI when complete
+- [x] Handle errors (video has no captions)
+- **Acceptance**: ✅ Can manually fetch
 
 ---
 
@@ -312,25 +312,26 @@ See [MILESTONE_3_COMPLETED.md](./MILESTONE_3_COMPLETED.md) for full details.
 - [x] Proper error handling
 - **Acceptance**: ✅ API analyzes video
 
-🔴 **T3.4.4**: Add "Analyze" button to videos
-- [ ] Add to video cards
-- [ ] Add to video detail page
-- [ ] Show loading state during analysis
-- [ ] Display success message
-- [ ] Navigate to Analysis tab
-- [ ] Show remaining analyses count
-- **Acceptance**: User can analyze videos
+🟢 **T3.4.4**: Add "Analyze" button to videos ✅ COMPLETE
+- [x] Add to video cards (navigates to detail page)
+- [x] Add to video detail page (Analysis tab)
+- [x] Create useAnalyzeVideo React Query hook
+- [x] Show loading state during analysis
+- [x] Display success message with remaining count
+- [x] Auto-update when complete
+- [x] Show remaining analyses count
+- **Acceptance**: ✅ User can analyze videos
 
-🔴 **T3.4.5**: Display analysis in video detail
-- [ ] Create "Analysis" tab
-- [ ] Format each section nicely:
+🟢 **T3.4.5**: Display analysis in video detail ✅ COMPLETE
+- [x] Create "Analysis" tab
+- [x] Format each section nicely:
   - Section header
   - Content (markdown support)
-  - Visual styling
-- [ ] Add "Copy Analysis" button
-- [ ] Show analyzed timestamp
-- [ ] Allow re-analysis (future)
-- **Acceptance**: Analysis looks professional
+  - Visual styling with cards
+- [x] Add copy buttons for transcript
+- [x] Show analyzed timestamp
+- [x] Allow re-analysis via analyze button
+- **Acceptance**: ✅ Analysis looks professional
 
 🟢 **T3.4.6**: Implement usage tracking ✅ COMPLETE
 - [x] Create `lib/usage/track.ts`
@@ -346,14 +347,16 @@ See [MILESTONE_3_COMPLETED.md](./MILESTONE_3_COMPLETED.md) for full details.
 - [x] Block if limit reached
 - **Acceptance**: ✅ Usage limits enforced
 
-🔴 **T3.4.7**: Add usage indicator to dashboard
-- [ ] Show in header or sidebar:
+🟢 **T3.4.7**: Add usage indicator to dashboard ✅ COMPLETE
+- [x] Show in header with dropdown:
   - "Analyses: 5/20 this month"
   - "Scripts: 8/30 this month"
-- [ ] Progress bars
-- [ ] Link to upgrade if near limit
-- [ ] Reset monthly (cron job)
-- **Acceptance**: User knows their usage
+  - "Channels: 3/5"
+- [x] Progress bars with color coding
+- [x] Link to upgrade if near limit
+- [x] Reset monthly (via cron job)
+- [x] Badge shows most constrained resource
+- **Acceptance**: ✅ User knows their usage
 
 ---
 

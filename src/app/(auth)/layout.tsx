@@ -7,6 +7,7 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import { Toaster } from "@/components/ui/sonner"
 
 export default async function AuthLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
@@ -37,6 +38,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
           </div>
         </div>
       </SidebarInset>
+      <Toaster />
     </SidebarProvider>
   )
 }

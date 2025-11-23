@@ -39,6 +39,7 @@ interface VideoCardProps {
   video: VideoData;
   onAnalyze?: (videoId: string) => void;
   onGenerateScript?: (videoId: string) => void;
+  onFetchTranscript?: (videoId: string) => void;
   compact?: boolean;
 }
 
@@ -46,19 +47,22 @@ export function VideoCard({
   video,
   onAnalyze,
   onGenerateScript,
+  onFetchTranscript,
   compact = false
 }: VideoCardProps) {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200 group">
+    <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
       {/* Thumbnail Section */}
       <Link href={`/videos/${video.id}`}>
-        <div className="relative aspect-video bg-muted">
+        <div className="relative aspect-video bg-muted overflow-hidden">
           <Image
             src={video.thumbnailUrl}
             alt={video.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-200"
+            className="object-cover group-hover:scale-110 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            loading="lazy"
+            priority={false}
           />
 
           {/* Duration Badge */}
@@ -109,6 +113,7 @@ export function VideoCard({
             width={24}
             height={24}
             className="rounded-full"
+            loading="lazy"
           />
           <span className="text-sm text-muted-foreground truncate">
             {video.channel.name}
@@ -155,27 +160,42 @@ export function VideoCard({
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="flex-1"
-            onClick={() => onAnalyze?.(video.id)}
-            disabled={!video.hasTranscript}
-          >
-            <Sparkles className="w-3 h-3 mr-1" />
-            Analyze
-          </Button>
-          <Button
-            size="sm"
-            className="flex-1"
-            onClick={() => onGenerateScript?.(video.id)}
-            disabled={!video.hasTranscript}
-          >
-            <FileText className="w-3 h-3 mr-1" />
-            Script
-          </Button>
-        </div>
+        {!video.hasTranscript ? (
+          <div className="flex flex-col gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full"
+              onClick={() => onFetchTranscript?.(video.id)}
+            >
+              <FileText className="w-3 h-3 mr-1" />
+              Fetch Transcript
+            </Button>
+            <p className="text-xs text-muted-foreground text-center">
+              Transcript required for analysis & scripts
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1"
+              onClick={() => onAnalyze?.(video.id)}
+            >
+              <Sparkles className="w-3 h-3 mr-1" />
+              Analyze
+            </Button>
+            <Button
+              size="sm"
+              className="flex-1"
+              onClick={() => onGenerateScript?.(video.id)}
+            >
+              <FileText className="w-3 h-3 mr-1" />
+              Script
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

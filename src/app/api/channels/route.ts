@@ -166,10 +166,15 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch all channels for the user
+    // Fetch all channels for the user with their watchlist associations
     const { data: channels, error } = await supabase
       .from('channels')
-      .select('*')
+      .select(`
+        *,
+        watchlist_channels (
+          watchlist_id
+        )
+      `)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -181,10 +186,18 @@ export async function GET(request: Request) {
       );
     }
 
+    // Transform the data to include watchlist_ids array
+    const channelsWithWatchlists = channels?.map((channel) => ({
+      ...channel,
+      watchlist_ids: (channel.watchlist_channels || [])
+        .map((wc: { watchlist_id: string | null }) => wc.watchlist_id)
+        .filter((id): id is string => id !== null),
+    })) || [];
+
     return NextResponse.json(
       {
         success: true,
-        channels: channels || [],
+        channels: channelsWithWatchlists,
       },
       { status: 200 }
     );

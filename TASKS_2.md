@@ -250,15 +250,16 @@
 
 ### Week 4: Watchlists
 
-#### Epic 2.3: Watchlist Management (Days 16-18)
+#### Epic 2.3: Watchlist Management (Days 16-18) ✅ COMPLETE
 
 **User Story 2.3.1**: As a user, I want to organize channels into watchlists
 **Priority**: P1
 **Estimated Time**: 12 hours
+**Status**: ✅ COMPLETE
 
 **Tasks**:
 
-🔴 **T2.3.1**: Create watchlists database functions
+🟢 **T2.3.1**: Create watchlists database functions ✅ COMPLETE
 - [ ] Verify watchlists table exists
 - [ ] Test inserting a watchlist
 - [ ] Test adding channel to watchlist
@@ -267,103 +268,96 @@
 - [ ] Verify triggers update stats
 - **Acceptance**: Database operations work
 
-🔴 **T2.3.2**: Create POST /api/watchlists
-- [ ] Create `app/api/watchlists/route.ts`
-- [ ] Implement POST handler:
-  ```typescript
-  export async function POST(request: Request) {
-    // 1. Get authenticated user
-    // 2. Parse body: { name, description?, color?, icon? }
-    // 3. Insert into watchlists table
-    // 4. Return created watchlist
-  }
-  ```
-- [ ] Validate name is not empty
-- [ ] Set default color and icon if not provided
-- [ ] Handle errors
-- **Acceptance**: Creates watchlist
+🟢 **T2.3.2**: Create POST /api/watchlists ✅ COMPLETE
+- [x] Create `app/api/watchlists/route.ts`
+- [x] Implement POST handler with validation
+- [x] Validate name is not empty
+- [x] Set default color and icon if not provided
+- [x] Handle errors
+- **Acceptance**: ✅ Creates watchlist
 
-🔴 **T2.3.3**: Create GET /api/watchlists
-- [ ] Implement GET handler
-- [ ] Fetch all watchlists for user
-- [ ] Include stats (channel_count, total_outliers)
-- [ ] Order by display_order, then created_at
-- [ ] Return as JSON
-- **Acceptance**: Returns watchlists
+🟢 **T2.3.3**: Create GET /api/watchlists ✅ COMPLETE
+- [x] Implement GET handler
+- [x] Fetch all watchlists for user
+- [x] Include stats (channel_count, total_outliers)
+- [x] Order by display_order, then created_at
+- [x] Return as JSON
+- **Acceptance**: ✅ Returns watchlists
 
-🔴 **T2.3.4**: Build "Create Watchlist" modal
-- [ ] Create `components/watchlists/create-watchlist-modal.tsx`
-- [ ] Form fields:
+🟢 **T2.3.4**: Build "Create Watchlist" modal ✅ COMPLETE
+- [x] Create `components/watchlists/create-watchlist-modal.tsx`
+- [x] Form fields with react-hook-form + Zod:
   - Name (required)
   - Description (optional)
   - Color picker (9 preset colors)
-  - Icon selector (15 icons)
-- [ ] Use react-hook-form + Zod
-- [ ] Preview watchlist card
-- [ ] Submit button
-- **Acceptance**: Modal creates watchlist
+  - Icon selector (8 icons)
+- [x] Live preview watchlist card
+- [x] Submit button with loading state
+- **Acceptance**: ✅ Modal creates watchlist
 
-🔴 **T2.3.5**: Add watchlists to sidebar
-- [ ] Update `components/dashboard/sidebar.tsx`
-- [ ] Add "Watchlists" section
-- [ ] List all user's watchlists:
-  - Icon with color
+🟢 **T2.3.5**: Add watchlists to sidebar ✅ COMPLETE
+- [x] Update `components/app-sidebar.tsx`
+- [x] Add "Watchlists" collapsible section
+- [x] List all user's watchlists:
+  - Color dot indicators
   - Name
   - Channel count badge
-- [ ] Add "+ New Watchlist" button
-- [ ] Make clickable (navigate to watchlist page)
-- [ ] Collapse/expand section
-- **Acceptance**: Watchlists show in sidebar
+- [x] Add "+ New Watchlist" button
+- [x] Make clickable (navigate to watchlist page)
+- [x] Collapse/expand section
+- **Acceptance**: ✅ Watchlists show in sidebar
 
-🔴 **T2.3.6**: Create watchlist detail page
-- [ ] Create `app/(dashboard)/watchlists/[id]/page.tsx`
-- [ ] Fetch watchlist data
-- [ ] Display:
+🟢 **T2.3.6**: Create watchlist detail page ✅ COMPLETE
+- [x] Create `app/(auth)/watchlists/[id]/page.tsx`
+- [x] Fetch watchlist data with channels
+- [x] Display:
   - Watchlist name and description
-  - Stats (channels, videos, outliers)
-  - List of channels in watchlist
-  - List of videos from those channels
-- [ ] Add "Edit" and "Delete" buttons
-- [ ] Style with watchlist color
-- **Acceptance**: Page displays correctly
+  - Stats cards (channels, videos, outliers)
+  - Grid of channels in watchlist
+  - Channel actions (view, remove)
+- [x] Add "Delete" button with confirmation
+- [x] Style with watchlist color
+- **Acceptance**: ✅ Page displays correctly
 
-🔴 **T2.3.7**: Implement add channel to watchlist
-- [ ] Create POST `/api/watchlists/[id]/channels`
-- [ ] Request body: `{ channelId }`
-- [ ] Insert into watchlist_channels junction table
-- [ ] Handle duplicate (channel already in watchlist)
-- [ ] Trigger updates stats
-- [ ] Return success
-- **Acceptance**: Channel added to watchlist
+🟢 **T2.3.7**: Implement add channel to watchlist ✅ COMPLETE
+- [x] Create POST `/api/watchlists/[id]/channels`
+- [x] Request body: `{ channelId }`
+- [x] Insert into watchlist_channels junction table
+- [x] Handle duplicate (channel already in watchlist)
+- [x] Trigger updates stats automatically
+- [x] Return success
+- **Acceptance**: ✅ Channel added to watchlist
 
-🔴 **T2.3.8**: Add "Add to Watchlist" UI
-- [ ] Add dropdown to channel card
-- [ ] Show all user's watchlists
-- [ ] Checkboxes for watchlists channel is in
-- [ ] Toggle on/off to add/remove
-- [ ] Show success toast
-- [ ] Update UI optimistically
-- **Acceptance**: Can manage channel watchlists
+🟢 **T2.3.8**: Add "Add to Watchlist" UI ✅ COMPLETE
+- [x] Add dropdown to channel card (FolderPlus icon)
+- [x] Show all user's watchlists
+- [x] Checkmarks for watchlists channel is in
+- [x] Toggle on/off to add/remove
+- [x] Show success toast
+- [x] Update UI via React Query invalidation
+- [x] Link to create new watchlist
+- **Acceptance**: ✅ Can manage channel watchlists
 
-🔴 **T2.3.9**: Implement watchlist deletion
-- [ ] Add DELETE `/api/watchlists/[id]`
-- [ ] Confirm deletion (doesn't delete channels)
-- [ ] Delete watchlist record
-- [ ] Cascade deletes watchlist_channels (database handles)
-- [ ] Show confirmation dialog
-- [ ] Redirect to watchlists page after delete
-- **Acceptance**: Can delete watchlists
+🟢 **T2.3.9**: Implement watchlist deletion ✅ COMPLETE
+- [x] Add DELETE `/api/watchlists/[id]`
+- [x] Confirm deletion (doesn't delete channels)
+- [x] Delete watchlist record
+- [x] Cascade deletes watchlist_channels (database handles)
+- [x] Show confirmation dialog
+- [x] Redirect to watchlists page after delete
+- **Acceptance**: ✅ Can delete watchlists
 
-🔴 **T2.3.10**: Create useWatchlists hook
-- [ ] Create `hooks/use-watchlists.ts`
-- [ ] Fetch watchlists with React Query
-- [ ] Add mutation hooks:
+🟢 **T2.3.10**: Create useWatchlists hook ✅ COMPLETE
+- [x] Create `hooks/use-watchlists.ts`
+- [x] Fetch watchlists with React Query
+- [x] Add mutation hooks:
   - useCreateWatchlist
   - useUpdateWatchlist
   - useDeleteWatchlist
   - useAddChannelToWatchlist
-- [ ] Handle loading/error states
-- **Acceptance**: Hooks work correctly
+  - useRemoveChannelFromWatchlist
+- [x] Handle loading/error states with toasts
+- **Acceptance**: ✅ Hooks work correctly
 
 ---
 

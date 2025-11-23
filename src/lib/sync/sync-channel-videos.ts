@@ -50,7 +50,7 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
   };
 
   try {
-    const supabase = await createClient();;
+    const supabase = await createClient();
 
     // 1. Get channel info from database
     const { data, error: channelError } = await supabase
@@ -77,7 +77,7 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
     // 3. Process each video
     for (const ytVideo of youtubeVideos) {
       // Check if video already exists
-      const { data: existingVideo, error: fetchError } = await supabase
+      const { data: existingVideo } = await supabase
         .from('videos')
         .select('id, view_count, like_count, comment_count')
         .eq('video_id', ytVideo.videoId)
@@ -99,9 +99,7 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
 
         const { error: updateError } = await supabase
           .from('videos')
-          // @ts-ignore - Supabase auth-helpers type inference issue
           .update(updateData)
-          // @ts-ignore - Supabase auth-helpers type inference issue
           .eq('id', existingVideo.id)
           .select();
 
@@ -129,7 +127,6 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
 
         const { error: insertError } = await supabase
           .from('videos')
-          // @ts-ignore - Supabase auth-helpers type inference issue
           .insert(insertData)
           .select();
 
@@ -159,7 +156,6 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
     // 7. Update channel's last_synced_at
     await supabase
       .from('channels')
-      // @ts-ignore - Supabase auth-helpers type inference issue
       .update({ last_synced_at: new Date().toISOString() })
       .eq('id', channelId)
       .select();
@@ -178,7 +174,7 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
  * Detect outliers and update videos table
  */
 async function detectAndMarkOutliers(channelId: string): Promise<void> {
-  const supabase = await createClient();;
+  const supabase = await createClient();
 
   // Get all videos for this channel
   const { data: videos } = await supabase
@@ -204,7 +200,6 @@ async function detectAndMarkOutliers(channelId: string): Promise<void> {
   // Update channel with averages
   await supabase
     .from('channels')
-    // @ts-ignore - Supabase auth-helpers type inference issue
     .update({
       avg_view_count: Math.round(channelAvg.avgViews),
       avg_engagement_rate: channelAvg.avgEngagementRate
@@ -225,7 +220,6 @@ async function detectAndMarkOutliers(channelId: string): Promise<void> {
     // Update video with outlier status
     await supabase
       .from('videos')
-      // @ts-ignore - Supabase auth-helpers type inference issue
       .update({
         is_outlier: outlierResult.isOutlier,
         outlier_score: outlierResult.score
@@ -239,7 +233,7 @@ async function detectAndMarkOutliers(channelId: string): Promise<void> {
  * Fetch transcripts for outlier videos that don't have one
  */
 async function fetchTranscriptsForOutliers(channelId: string): Promise<number> {
-  const supabase = await createClient();;
+  const supabase = await createClient();
   let transcriptsFetched = 0;
 
   // Get outlier videos without transcripts
@@ -264,7 +258,6 @@ async function fetchTranscriptsForOutliers(channelId: string): Promise<number> {
       if (transcript) {
         await supabase
           .from('videos')
-          // @ts-ignore - Supabase auth-helpers type inference issue
           .update({
             transcript,
             transcript_fetched_at: new Date().toISOString()
@@ -330,7 +323,7 @@ export async function syncChannelsBatch(
  * @returns Array of channel IDs
  */
 export async function getChannelsNeedingSync(limit: number = 10): Promise<string[]> {
-  const supabase = await createClient();;
+  const supabase = await createClient();
   const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
 
   const { data: channels } = await supabase
@@ -351,7 +344,7 @@ export async function getChannelsNeedingSync(limit: number = 10): Promise<string
  * @returns Array of sync results
  */
 export async function syncUserChannels(userId: string): Promise<SyncResult[]> {
-  const supabase = await createClient();;
+  const supabase = await createClient();
 
   // Get all user's channels
   const { data: channels } = await supabase
@@ -377,7 +370,7 @@ export async function getChannelSyncStats(channelId: string): Promise<{
   videosWithTranscripts: number;
   lastSyncedAt: string | null;
 } | null> {
-  const supabase = await createClient();;
+  const supabase = await createClient();
 
   const { data: channel } = await supabase
     .from('channels')

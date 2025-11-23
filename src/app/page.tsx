@@ -19,6 +19,12 @@ import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
 import { AnimatedBeam } from "@/components/ui/animated-beam";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { NavigationDock } from "@/components/navigation-dock";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -412,7 +418,7 @@ export default function Home() {
             Simple, Transparent Pricing
           </h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Start free, upgrade when you're ready
+            Start free, upgrade when you&apos;re ready
           </p>
         </div>
 
@@ -591,7 +597,7 @@ export default function Home() {
             ].map((testimonial, index) => (
               <Card key={index} className="border-border/50 hover:shadow-xl transition-all">
                 <CardContent className="p-6">
-                  <p className="text-lg mb-6 italic">"{testimonial.quote}"</p>
+                  <p className="text-lg mb-6 italic">&quot;{testimonial.quote}&quot;</p>
                   <div className="flex items-center gap-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground font-bold text-lg shrink-0">
                       {testimonial.initial}
@@ -607,6 +613,132 @@ export default function Home() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="container max-w-3xl mx-auto px-4 py-24 md:py-32">
+        <div className="text-center mb-16">
+          <Badge className="mb-4" variant="outline">
+            FAQ
+          </Badge>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+            Frequently Asked Questions
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Everything you need to know about ReatorAI
+          </p>
+        </div>
+
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="text-left">
+              What is ReatorAI?
+            </AccordionTrigger>
+            <AccordionContent>
+              ReatorAI is an AI-powered platform that helps short-form content creators discover viral videos,
+              analyze what makes them successful, and generate custom scripts optimized for YouTube Shorts,
+              TikTok, and Instagram Reels. We reduce content research time from 60 minutes to just 10 minutes.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-2">
+            <AccordionTrigger className="text-left">
+              How does outlier detection work?
+            </AccordionTrigger>
+            <AccordionContent>
+              Our AI algorithm analyzes video performance metrics across channels you track. It identifies
+              videos performing 2x or better than the channel&apos;s average views, which we call &quot;outliers.&quot;
+              These videos often contain proven viral patterns worth studying and replicating.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-3">
+            <AccordionTrigger className="text-left">
+              What video platforms do you support?
+            </AccordionTrigger>
+            <AccordionContent>
+              Currently, we support YouTube and YouTube Shorts. We&apos;re actively working on adding TikTok
+              and Instagram Reels support in future updates. You&apos;ll be notified when these platforms become available.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-4">
+            <AccordionTrigger className="text-left">
+              Can I cancel my subscription anytime?
+            </AccordionTrigger>
+            <AccordionContent>
+              Yes! You can cancel your subscription at any time with no questions asked. You&apos;ll continue
+              to have access to your paid features until the end of your current billing period. After that,
+              you&apos;ll automatically move to the free plan.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-5">
+            <AccordionTrigger className="text-left">
+              Do I need a credit card for the free trial?
+            </AccordionTrigger>
+            <AccordionContent>
+              No credit card required! Our free plan gives you 10 script generations and 20 AI analyses
+              per month forever. You only need to add payment information if you decide to upgrade to
+              Pro or Premium plans for more features.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-6">
+            <AccordionTrigger className="text-left">
+              How accurate is the AI analysis?
+            </AccordionTrigger>
+            <AccordionContent>
+              Our AI is trained on thousands of viral videos and uses advanced language models to identify
+              patterns in hooks, storytelling, emotional triggers, and engagement tactics. While no AI is
+              100% perfect, our users report 85%+ satisfaction with the insights and recommendations provided.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-7">
+            <AccordionTrigger className="text-left">
+              What hook formats are available?
+            </AccordionTrigger>
+            <AccordionContent>
+              We offer 9 proven hook formats including: Question Hook, Shock Hook, Story Hook, Number Hook,
+              Controversy Hook, Problem Hook, Before/After Hook, Secret Hook, and Command Hook. Each format
+              is optimized for different content types and audience engagement patterns.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-8">
+            <AccordionTrigger className="text-left">
+              Can I export my scripts?
+            </AccordionTrigger>
+            <AccordionContent>
+              Yes! All generated scripts can be easily copied to your clipboard with one click. You can
+              also organize them in your script library with favorites, tags, and folders. Premium users
+              get additional export options including PDF and bulk export features.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-9">
+            <AccordionTrigger className="text-left">
+              How does the custom writing style feature work?
+            </AccordionTrigger>
+            <AccordionContent>
+              Pro and Premium users can train the AI on their unique writing style. Upload 3-5 sample scripts
+              you&apos;ve written, and our AI will learn your tone, vocabulary, sentence structure, and personality.
+              All future scripts will match your authentic voice instead of sounding generic or robotic.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-10">
+            <AccordionTrigger className="text-left">
+              What kind of support do you offer?
+            </AccordionTrigger>
+            <AccordionContent>
+              Free plan users get access to our help center and community forum. Pro users receive email
+              support with 24-48 hour response times. Premium users get priority email support with
+              12-hour response times plus access to 1-on-1 onboarding calls and strategy sessions.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </section>
 
       {/* Final CTA Section */}
@@ -681,6 +813,7 @@ export default function Home() {
               <Link href="#features" className="hover:text-foreground transition-colors">Features</Link>
               <Link href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</Link>
               <Link href="#pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+              <Link href="#faq" className="hover:text-foreground transition-colors">FAQ</Link>
               <span className="text-border">|</span>
               <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
               <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>

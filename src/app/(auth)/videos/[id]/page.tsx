@@ -1,27 +1,45 @@
 "use client";
 
-import { use } from "react";
+import { use, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Play, Sparkles, FileText, Eye, Heart, MessageCircle } from "lucide-react";
+import { ArrowLeft, Play, Sparkles, FileText, Eye, Heart, MessageCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useVideo } from "@/hooks/use-videos";
+import { useVideo, useAnalyzeVideo, useFetchTranscript } from "@/hooks/use-videos";
 import { formatDistanceToNow } from "date-fns";
+import { VideoDetailSkeleton } from "@/components/ui/loading-skeletons";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function VideoDetailPage({ params }: PageProps) {
-  const { id } = use(params);
+function VideoDetailContent({ id }: { id: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultTab = searchParams.get("tab") || "overview";
 
   const { data, isLoading, error } = useVideo(id);
+  const analyzeVideo = useAnalyzeVideo();
+  const fetchTranscript = useFetchTranscript();
+
+  const handleAnalyze = async () => {
+    try {
+      await analyzeVideo.mutateAsync(id);
+    } catch {
+      // Error is handled in the hook
+    }
+  };
+
+  const handleFetchTranscript = async () => {
+    try {
+      await fetchTranscript.mutateAsync(id);
+    } catch {
+      // Error is handled in the hook
+    }
+  };
 
   const formatNumber = (num: number): string => {
     if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
@@ -41,12 +59,8 @@ export default function VideoDetailPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-        <div className="px-4 lg:px-6">
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        </div>
+      <div className="flex flex-col gap-6 py-4 md:py-6 px-4 lg:px-6">
+        <VideoDetailSkeleton />
       </div>
     );
   }
@@ -59,7 +73,7 @@ export default function VideoDetailPage({ params }: PageProps) {
             <Play className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-xl font-semibold mb-2">Video not found</h3>
             <p className="text-muted-foreground mb-4 max-w-sm">
-              The video you're looking for doesn't exist or you don't have access to it.
+              The video you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.
             </p>
             <Button onClick={() => router.push("/videos")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -252,7 +266,7 @@ export default function VideoDetailPage({ params }: PageProps) {
                     <h3 className="font-semibold mb-2">Outlier Performance</h3>
                     <p className="text-sm text-muted-foreground">
                       This video is performing {video.outlierScore?.toFixed(1)}x better than the
-                      channel's average, making it an outlier worth analyzing for viral patterns.
+                      channel&apos;s average, making it an outlier worth analyzing for viral patterns.
                     </p>
                   </div>
                 )}
@@ -346,14 +360,26 @@ export default function VideoDetailPage({ params }: PageProps) {
                     content patterns.
                   </p>
                   <Button
-                    onClick={() => {
-                      // TODO: Implement analyze action
-                      alert("Analyze functionality will be implemented in the next phase");
-                    }}
+                    onClick={handleAnalyze}
+                    disabled={analyzeVideo.isPending || !video.hasTranscript}
                   >
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Analyze Video
+                    {analyzeVideo.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Analyze Video
+                      </>
+                    )}
                   </Button>
+                  {!video.hasTranscript && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Transcript required for analysis
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -393,9 +419,26 @@ export default function VideoDetailPage({ params }: PageProps) {
                   <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">No Transcript Available</h3>
                   <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-                    This video doesn't have a transcript yet. Transcripts are automatically
-                    fetched for outlier videos.
+                    This video doesn&apos;t have a transcript yet. Transcripts are automatically
+                    fetched for outlier videos, or you can fetch it manually.
                   </p>
+                  <Button
+                    onClick={handleFetchTranscript}
+                    disabled={fetchTranscript.isPending}
+                    variant="outline"
+                  >
+                    {fetchTranscript.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Fetching Transcript...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Fetch Transcript
+                      </>
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
             )}
@@ -403,5 +446,19 @@ export default function VideoDetailPage({ params }: PageProps) {
         </Tabs>
       </div>
     </div>
+  );
+}
+
+export default function VideoDetailPage({ params }: PageProps) {
+  const { id } = use(params);
+
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col gap-6 py-4 md:py-6 px-4 lg:px-6">
+        <VideoDetailSkeleton />
+      </div>
+    }>
+      <VideoDetailContent id={id} />
+    </Suspense>
   );
 }

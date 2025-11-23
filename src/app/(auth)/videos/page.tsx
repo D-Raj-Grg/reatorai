@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Play, Loader2 } from "lucide-react";
+import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useVideos } from "@/hooks/use-videos";
+import { useVideos, useFetchTranscript } from "@/hooks/use-videos";
 import { useChannels } from "@/hooks/use-channels";
 import { useWatchlists } from "@/hooks/use-watchlists";
 import { VideoCard } from "@/components/videos/video-card";
 import { VideoFilters, VideoFilterOptions } from "@/components/videos/video-filters";
+import { GridSkeleton, VideoCardSkeleton } from "@/components/ui/loading-skeletons";
 
 export default function VideosPage() {
   const router = useRouter();
@@ -41,6 +42,9 @@ export default function VideosPage() {
 
   const videos = videosData?.videos || [];
 
+  // Mutations
+  const fetchTranscript = useFetchTranscript();
+
   // Action handlers
   const handleAnalyze = (videoId: string) => {
     router.push(`/videos/${videoId}?tab=analysis`);
@@ -48,6 +52,14 @@ export default function VideosPage() {
 
   const handleGenerateScript = (videoId: string) => {
     router.push(`/scripts/new?videoId=${videoId}`);
+  };
+
+  const handleFetchTranscript = async (videoId: string) => {
+    try {
+      await fetchTranscript.mutateAsync(videoId);
+    } catch (error) {
+      // Error is handled in the hook
+    }
   };
 
   // Transform channels for filter dropdown
@@ -67,8 +79,8 @@ export default function VideosPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 px-4 lg:px-6">
         <div>
-          <h1 className="text-3xl font-bold">Videos</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold">Videos</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Discover and analyze viral content from your tracked channels
           </p>
         </div>
@@ -86,9 +98,7 @@ export default function VideosPage() {
       {/* Videos List */}
       <div className="px-4 lg:px-6">
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
+          <GridSkeleton count={6} SkeletonComponent={VideoCardSkeleton} />
         ) : videos && videos.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {videos.map((video) => (
@@ -97,24 +107,25 @@ export default function VideosPage() {
                 video={video}
                 onAnalyze={handleAnalyze}
                 onGenerateScript={handleGenerateScript}
+                onFetchTranscript={handleFetchTranscript}
               />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-full bg-muted p-6 mb-4">
-              <Play className="h-12 w-12 text-muted-foreground" />
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in-up">
+            <div className="rounded-full bg-gradient-to-br from-primary/10 to-primary/5 p-8 mb-6 animate-float">
+              <Play className="h-16 w-16 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">No videos found</h3>
-            <p className="text-muted-foreground mb-4 max-w-sm">
+            <h3 className="text-2xl font-bold mb-3">No videos found</h3>
+            <p className="text-muted-foreground mb-6 max-w-md text-base leading-relaxed">
               {filters.search || filters.channelId || filters.watchlistId || filters.isOutlier
-                ? "Try adjusting your filters to see more results"
-                : "Add channels to your watchlists to start discovering viral content"}
+                ? "Try adjusting your filters to see more results. Clear filters or browse all videos."
+                : "Start discovering viral content by adding YouTube channels to your watchlists. Track performance and find outlier videos."}
             </p>
             {!filters.search && !filters.channelId && !filters.watchlistId && !filters.isOutlier && (
-              <Button onClick={() => router.push("/channels")}>
-                <Play className="mr-2 h-4 w-4" />
-                Add Channels
+              <Button size="lg" onClick={() => router.push("/channels")}>
+                <Play className="mr-2 h-5 w-5" />
+                Add Your First Channel
               </Button>
             )}
           </div>

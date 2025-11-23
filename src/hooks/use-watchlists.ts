@@ -62,6 +62,8 @@ export function useWatchlists() {
       const data = await response.json();
       return data.watchlists as Watchlist[];
     },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
   });
 }
 
@@ -81,6 +83,8 @@ export function useWatchlist(watchlistId: string | undefined) {
       return data.watchlist as WatchlistWithChannels;
     },
     enabled: !!watchlistId,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
   });
 }
 

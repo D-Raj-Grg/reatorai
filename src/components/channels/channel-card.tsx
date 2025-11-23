@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Users, Video, Trash2, Loader2, RefreshCw } from "lucide-react"
+import Image from "next/image"
+import { Users, Video, Trash2, Loader2, RefreshCw, FolderPlus, Check } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,23 +16,43 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useDeleteChannel, useSyncChannel, type Channel } from "@/hooks/use-channels"
+import {
+  useWatchlists,
+  useAddChannelToWatchlist,
+  useRemoveChannelFromWatchlist,
+} from "@/hooks/use-watchlists"
 import { formatDistanceToNow } from "date-fns"
 
 interface ChannelCardProps {
   channel: Channel
 }
 
+interface ChannelWithWatchlists extends Channel {
+  watchlist_ids?: string[]
+}
+
 export function ChannelCard({ channel }: ChannelCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const deleteChannel = useDeleteChannel()
   const syncChannel = useSyncChannel()
+  const { data: watchlists } = useWatchlists()
+  const addToWatchlist = useAddChannelToWatchlist()
+  const removeFromWatchlist = useRemoveChannelFromWatchlist()
 
   const handleDelete = async () => {
     try {
       await deleteChannel.mutateAsync(channel.id)
       setShowDeleteDialog(false)
-    } catch (error) {
+    } catch {
       // Error is handled in the hook
     }
   }
@@ -39,10 +60,26 @@ export function ChannelCard({ channel }: ChannelCardProps) {
   const handleSync = async () => {
     try {
       await syncChannel.mutateAsync(channel.id)
-    } catch (error) {
+    } catch {
       // Error is handled in the hook
     }
   }
+
+  const handleWatchlistToggle = async (watchlistId: string, isInWatchlist: boolean) => {
+    try {
+      if (isInWatchlist) {
+        await removeFromWatchlist.mutateAsync({ watchlistId, channelId: channel.id })
+      } else {
+        await addToWatchlist.mutateAsync({ watchlistId, channelId: channel.id })
+      }
+    } catch {
+      // Error is handled in the hooks
+    }
+  }
+
+  // Check which watchlists this channel is in (if data available)
+  const channelWatchlists = (channel as ChannelWithWatchlists).watchlist_ids || []
+  const isInWatchlist = (watchlistId: string) => channelWatchlists.includes(watchlistId)
 
   const formatNumber = (num: number | undefined | null): string => {
     if (!num) return "0"
@@ -53,15 +90,20 @@ export function ChannelCard({ channel }: ChannelCardProps) {
 
   return (
     <>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
         <CardHeader className="p-0">
-          <div className="aspect-video bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center relative">
+          <div className="aspect-video bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center relative group-hover:from-primary/15 group-hover:to-primary/10 transition-colors duration-300">
             {channel.thumbnail_url ? (
-              <img
-                src={channel.thumbnail_url}
-                alt={channel.channel_name}
-                className="w-24 h-24 rounded-full object-cover border-4 border-background"
-              />
+              <div className="relative w-24 h-24 rounded-full border-4 border-background overflow-hidden">
+                <Image
+                  src={channel.thumbnail_url}
+                  alt={channel.channel_name}
+                  fill
+                  className="object-cover"
+                  sizes="96px"
+                  loading="lazy"
+                />
+              </div>
             ) : (
               <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
                 <Video className="h-12 w-12 text-primary" />
@@ -106,11 +148,11 @@ export function ChannelCard({ channel }: ChannelCardProps) {
           </div>
         </CardContent>
 
-        <CardFooter className="p-4 pt-0 gap-2">
+        <CardFooter className="p-4 pt-0 gap-2 flex-wrap">
           <Button
             variant="outline"
             size="sm"
-            className="flex-1"
+            className="flex-1 min-w-[80px] min-h-[44px]"
             onClick={handleSync}
             disabled={syncChannel.isPending}
           >
@@ -121,16 +163,66 @@ export function ChannelCard({ channel }: ChannelCardProps) {
             )}
             Sync
           </Button>
-          <Link href={`/channels/${channel.id}`} className="flex-1">
-            <Button variant="default" size="sm" className="w-full">
-              View Details
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="min-w-[44px] min-h-[44px]">
+                <FolderPlus className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Add to Watchlist</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {watchlists && watchlists.length > 0 ? (
+                <>
+                  {watchlists.map((watchlist) => {
+                    const inWatchlist = isInWatchlist(watchlist.id)
+                    return (
+                      <DropdownMenuItem
+                        key={watchlist.id}
+                        onClick={() => handleWatchlistToggle(watchlist.id, inWatchlist)}
+                        disabled={addToWatchlist.isPending || removeFromWatchlist.isPending}
+                      >
+                        <div className="flex items-center gap-2 w-full">
+                          <div
+                            className="h-3 w-3 rounded-full"
+                            style={{ backgroundColor: watchlist.color }}
+                          />
+                          <span className="flex-1">{watchlist.name}</span>
+                          {inWatchlist && <Check className="h-4 w-4" />}
+                        </div>
+                      </DropdownMenuItem>
+                    )
+                  })}
+                </>
+              ) : (
+                <DropdownMenuItem disabled>
+                  <span className="text-muted-foreground text-sm">
+                    No watchlists yet
+                  </span>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/watchlists" className="w-full cursor-pointer">
+                  <FolderPlus className="h-4 w-4 mr-2" />
+                  Create Watchlist
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Link href={`/channels/${channel.id}`}>
+            <Button variant="default" size="sm" className="min-h-[44px]">
+              View
             </Button>
           </Link>
+
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowDeleteDialog(true)}
-            className="text-destructive hover:text-destructive"
+            className="text-destructive hover:text-destructive min-w-[44px] min-h-[44px]"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

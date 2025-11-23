@@ -50,6 +50,8 @@ export function useChannels() {
       const data = await response.json();
       return data.channels as Channel[];
     },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
   });
 }
 
@@ -69,6 +71,8 @@ export function useChannel(channelId: string | undefined) {
       return data.channel as ChannelWithVideos;
     },
     enabled: !!channelId,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
   });
 }
 

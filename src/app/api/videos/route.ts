@@ -145,6 +145,7 @@ export async function GET(request: Request) {
     }
 
     // Transform data to match VideoData interface
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const transformedVideos = (videos || []).map((video: any) => ({
       id: video.id,
       videoId: video.video_id,

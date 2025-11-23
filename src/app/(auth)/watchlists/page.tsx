@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useWatchlists, useCreateWatchlist } from "@/hooks/use-watchlists"
 import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { GridSkeleton, WatchlistCardSkeleton } from "@/components/ui/loading-skeletons"
 
 const PRESET_COLORS = [
   { name: "Blue", value: "#3B82F6" },
@@ -184,9 +185,7 @@ export default function WatchlistsPage() {
       {/* Watchlists List */}
       {isLoading ? (
         <div className="px-4 lg:px-6">
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
+          <GridSkeleton count={6} SkeletonComponent={WatchlistCardSkeleton} />
         </div>
       ) : watchlists && watchlists.length > 0 ? (
         <div className="px-4 lg:px-6">
@@ -256,16 +255,16 @@ export default function WatchlistsPage() {
         </div>
       ) : (
         <div className="px-4 lg:px-6">
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="rounded-full bg-muted p-6 mb-4">
-            <Folder className="h-12 w-12 text-muted-foreground" />
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in-up">
+          <div className="rounded-full bg-gradient-to-br from-primary/10 to-primary/5 p-8 mb-6 animate-float">
+            <Folder className="h-16 w-16 text-primary" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">No watchlists yet</h3>
-          <p className="text-muted-foreground mb-4 max-w-sm">
-            Organize your channels into watchlists to track related content together
+          <h3 className="text-2xl font-bold mb-3">No watchlists yet</h3>
+          <p className="text-muted-foreground mb-6 max-w-md text-base leading-relaxed">
+            Organize your channels into custom watchlists to track related content together. Group by topic, niche, or strategy.
           </p>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button size="lg" onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="mr-2 h-5 w-5" />
             Create Your First Watchlist
           </Button>
           </div>

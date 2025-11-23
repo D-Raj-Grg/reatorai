@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Loader2, Video, Users, ArrowLeft, Trash2, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,6 +26,19 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+interface ChannelVideo {
+  id: string;
+  video_id: string;
+  title: string;
+  thumbnail_url: string | null;
+  published_at: string;
+  view_count: number | null;
+  like_count: number | null;
+  comment_count: number | null;
+  is_outlier: boolean;
+  outlier_score: number | null;
+}
+
 export default function ChannelDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const router = useRouter();
@@ -38,7 +52,7 @@ export default function ChannelDetailPage({ params }: PageProps) {
     try {
       await deleteChannel.mutateAsync(id);
       router.push("/channels");
-    } catch (error) {
+    } catch {
       // Error handling is done in the hook
     }
   };
@@ -46,7 +60,7 @@ export default function ChannelDetailPage({ params }: PageProps) {
   const handleSync = async () => {
     try {
       await syncChannel.mutateAsync(id);
-    } catch (error) {
+    } catch {
       // Error handling is done in the hook
     }
   };
@@ -78,7 +92,7 @@ export default function ChannelDetailPage({ params }: PageProps) {
             <Video className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-xl font-semibold mb-2">Channel not found</h3>
             <p className="text-muted-foreground mb-4 max-w-sm">
-              The channel you're looking for doesn't exist or you don't have access to it.
+              The channel you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.
             </p>
             <Button onClick={() => router.push("/channels")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -91,8 +105,8 @@ export default function ChannelDetailPage({ params }: PageProps) {
   }
 
   const channel = channelData;
-  const videos = channel.videos || [];
-  const outliers = videos.filter((v: any) => v.is_outlier);
+  const videos = (channel.videos || []) as ChannelVideo[];
+  const outliers = videos.filter((v) => v.is_outlier);
 
   return (
     <div className="flex flex-col gap-6 py-4 md:py-6">
@@ -114,9 +128,11 @@ export default function ChannelDetailPage({ params }: PageProps) {
           {/* Channel Avatar */}
           <div className="relative">
             {channel.thumbnail_url ? (
-              <img
+              <Image
                 src={channel.thumbnail_url}
                 alt={channel.channel_name}
+                width={128}
+                height={128}
                 className="w-32 h-32 rounded-full object-cover border-4 border-background shadow-lg"
               />
             ) : (
@@ -255,7 +271,7 @@ export default function ChannelDetailPage({ params }: PageProps) {
                 </Badge>
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {outliers.map((video: any) => (
+                {outliers.map((video) => (
                   <VideoCard
                     key={video.id}
                     video={{
@@ -270,7 +286,7 @@ export default function ChannelDetailPage({ params }: PageProps) {
                       commentCount: video.comment_count || 0,
                       engagementRate: 0,
                       isOutlier: video.is_outlier || false,
-                      outlierScore: video.outlier_score,
+                      outlierScore: video.outlier_score ?? undefined,
                       hasTranscript: false,
                       hasAnalysis: false,
                       channel: {
@@ -305,8 +321,8 @@ export default function ChannelDetailPage({ params }: PageProps) {
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {videos
-                  .filter((v: any) => !v.is_outlier)
-                  .map((video: any) => (
+                  .filter((v) => !v.is_outlier)
+                  .map((video) => (
                     <VideoCard
                       key={video.id}
                       video={{
@@ -321,7 +337,7 @@ export default function ChannelDetailPage({ params }: PageProps) {
                         commentCount: video.comment_count || 0,
                         engagementRate: 0,
                         isOutlier: video.is_outlier || false,
-                        outlierScore: video.outlier_score,
+                        outlierScore: video.outlier_score ?? undefined,
                         hasTranscript: false,
                         hasAnalysis: false,
                         channel: {
@@ -385,7 +401,7 @@ export default function ChannelDetailPage({ params }: PageProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Channel</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{channel.channel_name}"? This will also
+              Are you sure you want to delete &quot;{channel.channel_name}&quot;? This will also
               delete all synced videos and analyses. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>

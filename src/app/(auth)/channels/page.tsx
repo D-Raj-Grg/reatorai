@@ -20,6 +20,7 @@ import { SUGGESTED_CHANNELS, getAllCategories } from "@/lib/suggestions/educatio
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { GridSkeleton, ChannelCardSkeleton } from "@/components/ui/loading-skeletons"
 
 export default function ChannelsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -36,7 +37,7 @@ export default function ChannelsPage() {
       await addChannel.mutateAsync(channelUrl)
       setChannelUrl("")
       setIsAddModalOpen(false)
-    } catch (error) {
+    } catch {
       // Error handling is done in the hook
     }
   }
@@ -45,17 +46,17 @@ export default function ChannelsPage() {
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
       {/* Header */}
       <div className="flex flex-col gap-4 px-4 lg:px-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Channels</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold">Channels</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Track YouTube channels and discover viral content
           </p>
         </div>
 
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               Add Channel
             </Button>
@@ -116,9 +117,7 @@ export default function ChannelsPage() {
       {/* Channels List */}
       {isLoading ? (
         <div className="px-4 lg:px-6">
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
+          <GridSkeleton count={6} SkeletonComponent={ChannelCardSkeleton} />
         </div>
       ) : channels && channels.length > 0 ? (
         <div className="px-4 lg:px-6">
@@ -132,16 +131,16 @@ export default function ChannelsPage() {
         <div className="px-4 lg:px-6">
           <div className="space-y-8">
           {/* Empty State Header */}
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-full bg-muted p-6 mb-4">
-              <Plus className="h-12 w-12 text-muted-foreground" />
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in-up">
+            <div className="rounded-full bg-gradient-to-br from-primary/10 to-primary/5 p-8 mb-6 animate-float">
+              <Plus className="h-16 w-16 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">No channels yet</h3>
-            <p className="text-muted-foreground mb-4 max-w-sm">
-              Start tracking YouTube channels to discover viral content and generate scripts
+            <h3 className="text-2xl font-bold mb-3">No channels yet</h3>
+            <p className="text-muted-foreground mb-6 max-w-md text-base leading-relaxed">
+              Start tracking YouTube channels to discover viral content, analyze what works, and generate winning scripts based on proven patterns.
             </p>
-            <Button onClick={() => setIsAddModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button size="lg" onClick={() => setIsAddModalOpen(true)}>
+              <Plus className="mr-2 h-5 w-5" />
               Add Your First Channel
             </Button>
           </div>
@@ -157,7 +156,7 @@ export default function ChannelsPage() {
             </p>
 
             <Tabs defaultValue="Science" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
                 {getAllCategories().map((category) => (
                   <TabsTrigger key={category} value={category}>
                     {category}

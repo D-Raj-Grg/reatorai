@@ -50,7 +50,7 @@ export async function fetchTranscript(
     // Validate video ID
     if (!videoId || videoId.length !== 11) {
       console.error('Invalid YouTube video ID:', videoId);
-      return null;
+      throw new Error(`Invalid YouTube video ID: ${videoId}. Expected 11 characters.`);
     }
 
     // Fetch transcript from YouTube
@@ -59,7 +59,7 @@ export async function fetchTranscript(
     });
 
     if (!transcript || transcript.length === 0) {
-      return null;
+      throw new Error('No transcript segments returned from YouTube');
     }
 
     // Combine all segments into one text
@@ -74,17 +74,22 @@ export async function fetchTranscript(
 
     return fullTranscript;
   } catch (error) {
-    // Handle common errors
+    // Handle common errors with more specific messages
     if (error instanceof Error) {
       if (error.message.includes('Transcript is disabled')) {
-        console.warn(`Transcript disabled for video: ${videoId}`);
-      } else if (error.message.includes('Could not find')) {
-        console.warn(`No transcript found for video: ${videoId}`);
+        throw new Error(`Transcripts are disabled for this video. The creator may have turned them off.`);
+      } else if (error.message.includes('Could not find') || error.message.includes('No transcripts available')) {
+        throw new Error(`No transcripts available for this video. The creator may not have added any captions.`);
+      } else if (error.message.includes('Invalid YouTube video ID')) {
+        throw error; // Re-throw validation errors as-is
+      } else if (error.message.includes('No transcript segments')) {
+        throw error; // Re-throw empty transcript error
       } else {
         console.error('Error fetching transcript:', error.message);
+        throw new Error(`Failed to fetch transcript: ${error.message}`);
       }
     }
-    return null;
+    throw new Error('An unknown error occurred while fetching the transcript');
   }
 }
 

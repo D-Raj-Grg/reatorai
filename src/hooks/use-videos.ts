@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 /**
  * Video analysis data structure
@@ -89,6 +90,8 @@ export function useVideos(filters: VideoFilters = {}) {
       }
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
   });
 }
 
@@ -108,5 +111,84 @@ export function useVideo(videoId: string | undefined) {
       return response.json();
     },
     enabled: !!videoId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
+
+/**
+ * Hook to analyze a video using AI
+ */
+export function useAnalyzeVideo() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (videoId: string) => {
+      const response = await fetch(`/api/videos/${videoId}/analyze`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Failed to analyze video');
+      }
+
+      return data;
+    },
+    onSuccess: (data, videoId) => {
+      // Invalidate video queries to refetch with new analysis
+      queryClient.invalidateQueries({ queryKey: ['video', videoId] });
+      queryClient.invalidateQueries({ queryKey: ['videos'] });
+
+      // Show success message
+      if (data.fromCache) {
+        toast.success('Analysis loaded from cache');
+      } else {
+        toast.success('Video analyzed successfully!', {
+          description: `${data.remaining} analyses remaining this month`,
+        });
+      }
+    },
+    onError: (error: Error) => {
+      toast.error('Failed to analyze video', {
+        description: error.message,
+      });
+    },
+  });
+}
+
+/**
+ * Hook to fetch transcript for a video
+ */
+export function useFetchTranscript() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (videoId: string) => {
+      const response = await fetch(`/api/videos/${videoId}/transcript`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch transcript');
+      }
+
+      return data;
+    },
+    onSuccess: (data, videoId) => {
+      // Invalidate video queries to refetch with new transcript
+      queryClient.invalidateQueries({ queryKey: ['video', videoId] });
+      queryClient.invalidateQueries({ queryKey: ['videos'] });
+
+      toast.success('Transcript fetched successfully!');
+    },
+    onError: (error: Error) => {
+      toast.error('Failed to fetch transcript', {
+        description: error.message,
+      });
+    },
   });
 }
