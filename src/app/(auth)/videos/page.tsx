@@ -1,26 +1,66 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Play, Filter, Search, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Play, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useVideos } from "@/hooks/use-videos";
+import { useChannels } from "@/hooks/use-channels";
+import { useWatchlists } from "@/hooks/use-watchlists";
+import { VideoCard } from "@/components/videos/video-card";
+import { VideoFilters, VideoFilterOptions } from "@/components/videos/video-filters";
 
 export default function VideosPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filterType, setFilterType] = useState("all")
+  const router = useRouter();
 
-  // Placeholder: This will be replaced with actual API call
-  const isLoading = false
-  const videos: any[] = []
+  // Fetch channels and watchlists for filters
+  const { data: channels } = useChannels();
+  const { data: watchlists } = useWatchlists();
+
+  // Filter state
+  const [filters, setFilters] = useState<VideoFilterOptions>({
+    search: "",
+    channelId: undefined,
+    watchlistId: undefined,
+    isOutlier: false,
+    sortBy: "date",
+    sortOrder: "desc",
+  });
+
+  // Fetch videos with filters
+  const { data: videosData, isLoading } = useVideos({
+    search: filters.search || undefined,
+    channelId: filters.channelId,
+    watchlistId: filters.watchlistId,
+    isOutlier: filters.isOutlier || undefined,
+    sortBy: filters.sortBy,
+    sortOrder: filters.sortOrder,
+    page: 1,
+    limit: 50,
+  });
+
+  const videos = videosData?.videos || [];
+
+  // Action handlers
+  const handleAnalyze = (videoId: string) => {
+    router.push(`/videos/${videoId}?tab=analysis`);
+  };
+
+  const handleGenerateScript = (videoId: string) => {
+    router.push(`/scripts/new?videoId=${videoId}`);
+  };
+
+  // Transform channels for filter dropdown
+  const channelOptions = channels?.map((channel) => ({
+    id: channel.id,
+    name: channel.channel_name,
+  }));
+
+  // Transform watchlists for filter dropdown
+  const watchlistOptions = watchlists?.map((watchlist) => ({
+    id: watchlist.id,
+    name: watchlist.name,
+  }));
 
   return (
     <div className="flex flex-col gap-6 py-4 md:py-6">
@@ -34,35 +74,13 @@ export default function VideosPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search videos..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-
-          <div className="flex gap-2">
-            <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Videos</SelectItem>
-                <SelectItem value="outliers">Outliers Only</SelectItem>
-                <SelectItem value="recent">Recent</SelectItem>
-                <SelectItem value="popular">Most Popular</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <VideoFilters
+          filters={filters}
+          onFilterChange={setFilters}
+          channels={channelOptions}
+          watchlists={watchlistOptions}
+          showWatchlistFilter={true}
+        />
       </div>
 
       {/* Videos List */}
@@ -74,34 +92,12 @@ export default function VideosPage() {
         ) : videos && videos.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {videos.map((video) => (
-              <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardHeader className="p-0">
-                  <div className="relative aspect-video bg-muted">
-                    <img
-                      src={video.thumbnail_url}
-                      alt={video.title}
-                      className="object-cover w-full h-full"
-                    />
-                    {video.is_outlier && (
-                      <Badge className="absolute top-2 right-2 bg-green-500">
-                        ⚡ Outlier
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold line-clamp-2 mb-2">
-                    {video.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {video.channel_name}
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{video.view_count?.toLocaleString()} views</span>
-                    <span>{video.published_at}</span>
-                  </div>
-                </CardContent>
-              </Card>
+              <VideoCard
+                key={video.id}
+                video={video}
+                onAnalyze={handleAnalyze}
+                onGenerateScript={handleGenerateScript}
+              />
             ))}
           </div>
         ) : (
@@ -109,16 +105,31 @@ export default function VideosPage() {
             <div className="rounded-full bg-muted p-6 mb-4">
               <Play className="h-12 w-12 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">No videos yet</h3>
+            <h3 className="text-xl font-semibold mb-2">No videos found</h3>
             <p className="text-muted-foreground mb-4 max-w-sm">
-              Add channels to your watchlists to start discovering viral content
+              {filters.search || filters.channelId || filters.watchlistId || filters.isOutlier
+                ? "Try adjusting your filters to see more results"
+                : "Add channels to your watchlists to start discovering viral content"}
             </p>
-            <Button asChild>
-              <a href="/channels">Add Channels</a>
-            </Button>
+            {!filters.search && !filters.channelId && !filters.watchlistId && !filters.isOutlier && (
+              <Button onClick={() => router.push("/channels")}>
+                <Play className="mr-2 h-4 w-4" />
+                Add Channels
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Pagination info */}
+        {videosData && videos.length > 0 && (
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            Showing {videos.length} of {videosData.total} videos
+            {videosData.hasMore && (
+              <span className="ml-2">• More results available</span>
+            )}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

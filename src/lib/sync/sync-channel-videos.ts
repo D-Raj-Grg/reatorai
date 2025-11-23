@@ -77,11 +77,11 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
     // 3. Process each video
     for (const ytVideo of youtubeVideos) {
       // Check if video already exists
-      const { data: existingVideo } = await supabase
+      const { data: existingVideo, error: fetchError } = await supabase
         .from('videos')
         .select('id, view_count, like_count, comment_count')
         .eq('video_id', ytVideo.videoId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() instead of single() to handle not found case
 
       const engagementRate = ytVideo.views > 0
         ? (ytVideo.likes + ytVideo.comments) / ytVideo.views
@@ -105,7 +105,9 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
           .eq('id', existingVideo.id)
           .select();
 
-        if (!updateError) {
+        if (updateError) {
+          console.error(`Error updating video ${ytVideo.videoId}:`, updateError);
+        } else {
           result.videosUpdated++;
         }
       } else {
@@ -131,7 +133,9 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
           .insert(insertData)
           .select();
 
-        if (!insertError) {
+        if (insertError) {
+          console.error(`Error inserting video ${ytVideo.videoId}:`, insertError);
+        } else {
           result.videosAdded++;
         }
       }

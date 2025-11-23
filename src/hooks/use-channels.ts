@@ -133,3 +133,46 @@ export function useDeleteChannel() {
     },
   });
 }
+
+/**
+ * Hook to sync a channel's videos
+ */
+export function useSyncChannel() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (channelId: string) => {
+      const response = await fetch(`/api/channels/${channelId}/sync`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Failed to sync channel');
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['channels'] });
+      queryClient.invalidateQueries({ queryKey: ['channel', data.channel?.id] });
+      queryClient.invalidateQueries({ queryKey: ['videos'] });
+
+      const stats = data.stats;
+      const messages = [];
+      if (stats.videosAdded > 0) messages.push(`${stats.videosAdded} new`);
+      if (stats.videosUpdated > 0) messages.push(`${stats.videosUpdated} updated`);
+      if (stats.outliersFound > 0) messages.push(`${stats.outliersFound} outliers`);
+
+      const message = messages.length > 0
+        ? `Synced! ${messages.join(', ')}`
+        : 'Channel synced successfully!';
+
+      toast.success(message);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}

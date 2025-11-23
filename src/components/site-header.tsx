@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { NavUser } from "@/components/nav-user"
+import { UsageIndicator } from "@/components/usage-indicator"
 import { useUser } from "@/hooks/use-user"
 import { buildBreadcrumbs } from "@/lib/breadcrumb-builder"
 
@@ -53,6 +54,7 @@ export function SiteHeader() {
 
         {/* Right side controls */}
         <div className="ml-auto flex items-center gap-2">
+          {user && <UsageIndicator />}
           <ThemeToggle />
           {user && (
             <NavUser

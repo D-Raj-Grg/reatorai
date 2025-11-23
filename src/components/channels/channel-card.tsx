@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useDeleteChannel, type Channel } from "@/hooks/use-channels"
+import { useDeleteChannel, useSyncChannel, type Channel } from "@/hooks/use-channels"
 import { formatDistanceToNow } from "date-fns"
 
 interface ChannelCardProps {
@@ -25,11 +25,20 @@ interface ChannelCardProps {
 export function ChannelCard({ channel }: ChannelCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const deleteChannel = useDeleteChannel()
+  const syncChannel = useSyncChannel()
 
   const handleDelete = async () => {
     try {
       await deleteChannel.mutateAsync(channel.id)
       setShowDeleteDialog(false)
+    } catch (error) {
+      // Error is handled in the hook
+    }
+  }
+
+  const handleSync = async () => {
+    try {
+      await syncChannel.mutateAsync(channel.id)
     } catch (error) {
       // Error is handled in the hook
     }
@@ -102,10 +111,14 @@ export function ChannelCard({ channel }: ChannelCardProps) {
             variant="outline"
             size="sm"
             className="flex-1"
-            title="Sync videos (coming soon)"
-            disabled
+            onClick={handleSync}
+            disabled={syncChannel.isPending}
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
+            {syncChannel.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4 mr-2" />
+            )}
             Sync
           </Button>
           <Link href={`/channels/${channel.id}`} className="flex-1">
