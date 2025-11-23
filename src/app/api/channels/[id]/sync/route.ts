@@ -8,6 +8,9 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { syncChannelVideos } from '@/lib/sync/sync-channel-videos';
+import type { Database } from '@/types/database';
+
+type Channel = Database['public']['Tables']['channels']['Row'];
 
 export async function POST(
   request: Request,
@@ -27,18 +30,20 @@ export async function POST(
     }
 
     // 2. Get channel and verify ownership
-    const { data: channel, error: channelError } = await supabase
+    const { data, error: channelError } = await supabase
       .from('channels')
       .select('*')
       .eq('id', id)
       .single();
 
-    if (channelError || !channel) {
+    if (channelError || !data) {
       return NextResponse.json(
         { error: 'Channel not found' },
         { status: 404 }
       );
     }
+
+    const channel = data as Channel;
 
     if (channel.user_id !== user.id) {
       return NextResponse.json(
@@ -140,18 +145,20 @@ export async function GET(
     }
 
     // Get channel
-    const { data: channel, error: channelError } = await supabase
+    const { data, error: channelError } = await supabase
       .from('channels')
       .select('id, channel_name, last_synced_at, user_id')
       .eq('id', id)
       .single();
 
-    if (channelError || !channel) {
+    if (channelError || !data) {
       return NextResponse.json(
         { error: 'Channel not found' },
         { status: 404 }
       );
     }
+
+    const channel = data as Pick<Channel, 'id' | 'channel_name' | 'last_synced_at' | 'user_id'>;
 
     if (channel.user_id !== user.id) {
       return NextResponse.json(

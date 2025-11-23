@@ -42,7 +42,7 @@ export async function POST(
     }
 
     // 3. Get video from database
-    const { data: video, error: videoError } = await supabase
+    const { data, error: videoError } = await supabase
       .from('videos')
       .select(`
         *,
@@ -55,12 +55,14 @@ export async function POST(
       .eq('id', id)
       .single();
 
-    if (videoError || !video) {
+    if (videoError || !data) {
       return NextResponse.json(
         { error: 'Video not found' },
         { status: 404 }
       );
     }
+
+    const video = data as any; // Type assertion due to Supabase type inference issues
 
     // 4. Verify user owns this video's channel
     if (video.channels?.user_id !== user.id) {
@@ -118,7 +120,7 @@ export async function POST(
         full_analysis: analysisResult.fullAnalysis,
         tokens_used: analysisResult.tokensUsed,
         analyzed_at: new Date().toISOString()
-      })
+      } as any) // Type assertion due to Supabase type inference issues
       .select()
       .single();
 
