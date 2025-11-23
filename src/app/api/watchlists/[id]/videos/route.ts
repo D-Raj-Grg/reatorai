@@ -60,7 +60,7 @@ export async function GET(
       );
     }
 
-    const channelIds = watchlistChannels.map((wc) => wc.channel_id);
+    const channelIds = (watchlistChannels as Array<{ channel_id: string }>).map((wc) => wc.channel_id);
 
     // Build query for videos
     let query = supabase

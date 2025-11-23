@@ -10,26 +10,9 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { Database } from '@/types/database';
 
-export interface UserSubscription {
-  id: string;
-  user_id: string;
-  plan_type: string;
-
-  // Limits
-  max_scripts_per_month: number;
-  max_analyses_per_month: number;
-  max_channels: number;
-
-  // Current usage
-  scripts_used_this_month: number;
-  analyses_used_this_month: number;
-  channels_count: number;
-
-  // Billing period
-  current_period_start: string;
-  current_period_end: string;
-}
+export type UserSubscription = Database['public']['Tables']['user_subscriptions']['Row'];
 
 export interface UsageStatus {
   canUse: boolean;
@@ -50,7 +33,7 @@ export interface AllUsageStatus {
  * Get user's subscription details
  */
 export async function getUserSubscription(userId: string): Promise<UserSubscription | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('user_subscriptions')
@@ -63,7 +46,7 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
     return null;
   }
 
-  return data as UserSubscription;
+  return data;
 }
 
 /**
@@ -83,8 +66,8 @@ export async function canAnalyzeVideo(userId: string): Promise<UsageStatus> {
     };
   }
 
-  const used = subscription.analyses_used_this_month;
-  const limit = subscription.max_analyses_per_month;
+  const used = subscription.analyses_used_this_month ?? 0;
+  const limit = subscription.max_analyses_per_month ?? 0;
   const remaining = Math.max(0, limit - used);
   const canUse = remaining > 0;
   const percentUsed = limit > 0 ? (used / limit) * 100 : 100;
@@ -95,7 +78,7 @@ export async function canAnalyzeVideo(userId: string): Promise<UsageStatus> {
     limit,
     used,
     percentUsed,
-    planType: subscription.plan_type
+    planType: subscription.plan_type ?? 'none'
   };
 }
 
@@ -116,8 +99,8 @@ export async function canGenerateScript(userId: string): Promise<UsageStatus> {
     };
   }
 
-  const used = subscription.scripts_used_this_month;
-  const limit = subscription.max_scripts_per_month;
+  const used = subscription.scripts_used_this_month ?? 0;
+  const limit = subscription.max_scripts_per_month ?? 0;
   const remaining = Math.max(0, limit - used);
   const canUse = remaining > 0;
   const percentUsed = limit > 0 ? (used / limit) * 100 : 100;
@@ -128,7 +111,7 @@ export async function canGenerateScript(userId: string): Promise<UsageStatus> {
     limit,
     used,
     percentUsed,
-    planType: subscription.plan_type
+    planType: subscription.plan_type ?? 'none'
   };
 }
 
@@ -149,8 +132,8 @@ export async function canAddChannel(userId: string): Promise<UsageStatus> {
     };
   }
 
-  const used = subscription.channels_count;
-  const limit = subscription.max_channels;
+  const used = subscription.channels_count ?? 0;
+  const limit = subscription.max_channels ?? 0;
   const remaining = Math.max(0, limit - used);
   const canUse = remaining > 0;
   const percentUsed = limit > 0 ? (used / limit) * 100 : 100;
@@ -161,7 +144,7 @@ export async function canAddChannel(userId: string): Promise<UsageStatus> {
     limit,
     used,
     percentUsed,
-    planType: subscription.plan_type
+    planType: subscription.plan_type ?? 'none'
   };
 }
 
@@ -191,7 +174,7 @@ export async function trackAnalysis(userId: string): Promise<{ success: boolean;
     };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Increment the counter
   const { error } = await supabase.rpc('increment_analyses_used', {
@@ -205,7 +188,7 @@ export async function trackAnalysis(userId: string): Promise<{ success: boolean;
       const { error: updateError } = await supabase
         .from('user_subscriptions')
         .update({
-          analyses_used_this_month: subscription.analyses_used_this_month + 1
+          analyses_used_this_month: (subscription.analyses_used_this_month ?? 0) + 1
         })
         .eq('user_id', userId);
 
@@ -232,7 +215,7 @@ export async function trackScriptGeneration(userId: string): Promise<{ success: 
     };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Increment the counter
   const { error } = await supabase.rpc('increment_scripts_used', {
@@ -246,7 +229,7 @@ export async function trackScriptGeneration(userId: string): Promise<{ success: 
       const { error: updateError } = await supabase
         .from('user_subscriptions')
         .update({
-          scripts_used_this_month: subscription.scripts_used_this_month + 1
+          scripts_used_this_month: (subscription.scripts_used_this_month ?? 0) + 1
         })
         .eq('user_id', userId);
 
@@ -273,14 +256,14 @@ export async function trackChannelAdd(userId: string): Promise<{ success: boolea
     };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const subscription = await getUserSubscription(userId);
   if (subscription) {
     const { error: updateError } = await supabase
       .from('user_subscriptions')
       .update({
-        channels_count: subscription.channels_count + 1
+        channels_count: (subscription.channels_count ?? 0) + 1
       })
       .eq('user_id', userId);
 
@@ -297,14 +280,14 @@ export async function trackChannelAdd(userId: string): Promise<{ success: boolea
  * Track channel removal (decrement counter)
  */
 export async function trackChannelRemove(userId: string): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const subscription = await getUserSubscription(userId);
-  if (subscription && subscription.channels_count > 0) {
+  if (subscription && (subscription.channels_count ?? 0) > 0) {
     const { error: updateError } = await supabase
       .from('user_subscriptions')
       .update({
-        channels_count: subscription.channels_count - 1
+        channels_count: (subscription.channels_count ?? 0) - 1
       })
       .eq('user_id', userId);
 
@@ -348,7 +331,7 @@ export function getUpgradePromptMessage(type: 'scripts' | 'analyses' | 'channels
  * Reset monthly usage counters (called by cron job)
  */
 export async function resetMonthlyUsage(): Promise<{ success: boolean; resetCount: number }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Reset all subscriptions where current_period_end has passed
   const { data, error } = await supabase

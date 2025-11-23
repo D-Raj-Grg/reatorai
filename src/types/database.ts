@@ -1,5 +1,5 @@
 // Database types generated from Supabase
-// Auto-generated on 2025-11-23 via Supabase MCP
+// Auto-generated via Supabase MCP
 
 export type Json =
   | string
@@ -452,7 +452,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      reset_monthly_usage: { Args: never; Returns: undefined }
+      increment_analyses_used: {
+        Args: { user_id_input: string }
+        Returns: undefined
+      }
+      increment_scripts_used: {
+        Args: { user_id_input: string }
+        Returns: undefined
+      }
+      reset_monthly_usage: { Args: Record<string, never>; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

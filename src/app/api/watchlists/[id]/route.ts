@@ -117,6 +117,7 @@ export async function PATCH(
     // Update watchlist
     const { data: watchlist, error } = await supabase
       .from('watchlists')
+      // @ts-expect-error - Supabase type inference issues
       .update(validatedData)
       .eq('id', id)
       .eq('user_id', user.id)

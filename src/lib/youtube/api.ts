@@ -62,11 +62,11 @@ export async function getChannelInfo(channelId: string): Promise<YouTubeChannelI
     return {
       id: channel.id!,
       name: channel.snippet!.title!,
-      handle: channel.snippet!.customUrl,
+      handle: channel.snippet!.customUrl ?? undefined,
       thumbnail: channel.snippet!.thumbnails!.default!.url!,
       subscribers: parseInt(channel.statistics!.subscriberCount || '0'),
       totalVideos: parseInt(channel.statistics!.videoCount || '0'),
-      description: channel.snippet!.description,
+      description: channel.snippet!.description ?? undefined,
     };
   } catch (error) {
     console.error('Error fetching channel info:', error);
@@ -122,7 +122,7 @@ export async function getChannelVideos(
     return videosResponse.data.items?.map((video) => ({
       videoId: video.id!,
       title: video.snippet!.title!,
-      description: video.snippet!.description,
+      description: video.snippet!.description ?? undefined,
       thumbnail: video.snippet!.thumbnails!.high!.url!,
       publishedAt: video.snippet!.publishedAt!,
       duration: parseDuration(video.contentDetails!.duration!),

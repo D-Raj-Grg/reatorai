@@ -10,6 +10,22 @@ import { createClient } from '@/lib/supabase/server';
 import { analyzeVideo } from '@/lib/openai/analyze';
 import { canAnalyzeVideo, trackAnalysis } from '@/lib/usage/track';
 
+interface VideoWithChannel {
+  id: string;
+  video_id: string;
+  title: string;
+  description: string | null;
+  transcript: string | null;
+  view_count: number | null;
+  like_count: number | null;
+  comment_count: number | null;
+  channels: {
+    id: string;
+    channel_name: string;
+    user_id: string;
+  } | null;
+}
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -62,7 +78,7 @@ export async function POST(
       );
     }
 
-    const video = data as any; // Type assertion due to Supabase type inference issues
+    const video = data as VideoWithChannel;
 
     // 4. Verify user owns this video's channel
     if (video.channels?.user_id !== user.id) {
@@ -108,6 +124,7 @@ export async function POST(
     // 8. Store analysis in database
     const { data: savedAnalysis, error: saveError } = await supabase
       .from('video_analyses')
+      // @ts-expect-error - Supabase type inference issues with insert
       .insert({
         video_id: id,
         user_id: user.id,
@@ -120,7 +137,7 @@ export async function POST(
         full_analysis: analysisResult.fullAnalysis,
         tokens_used: analysisResult.tokensUsed,
         analyzed_at: new Date().toISOString()
-      } as any) // Type assertion due to Supabase type inference issues
+      })
       .select()
       .single();
 
