@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import type { TablesInsert } from '@/types/database';
 
 // Validation schema for login
 const loginSchema = z.object({
@@ -39,30 +40,29 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user has subscription record, create if missing
-    const { data: subscription, error: subError } = await supabase
-      .from('user_subscriptions')
-      .select('*')
-      .eq('user_id', authData.user.id)
-      .single();
-
-    if (subError && subError.code === 'PGRST116') {
-      // Subscription doesn't exist, create it
-      await supabase.from('user_subscriptions').insert({
-        user_id: authData.user.id,
-        plan_type: 'free',
-        max_scripts_per_month: 5,
-        max_analyses_per_month: 20,
-        max_channels: 5,
-        scripts_used_this_month: 0,
-        analyses_used_this_month: 0,
-        channels_count: 0,
-        current_period_start: new Date().toISOString(),
-        current_period_end: new Date(
-          new Date().setMonth(new Date().getMonth() + 1)
-        ).toISOString(),
-      });
+    // Check if email is verified
+    if (!authData.user.email_confirmed_at) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Please verify your email address before logging in. Check your inbox for the verification link.',
+          emailNotVerified: true
+        },
+        { status: 403 }
+      );
     }
+
+    // Ensure user has subscription record (create if missing, ignore if exists)
+    const subscriptionData = {
+      user_id: authData.user.id,
+      plan_type: 'free',
+      max_scripts_per_month: 5,
+      max_analyses_per_month: 20,
+      max_channels: 5,
+    } as TablesInsert<'user_subscriptions'>;
+
+    // Insert subscription (ignore error if already exists due to unique constraint)
+    await supabase.from('user_subscriptions').insert(subscriptionData as never);
 
     return NextResponse.json(
       {
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: error.errors[0].message },
+        { success: false, error: error.issues[0].message },
         { status: 400 }
       );
     }

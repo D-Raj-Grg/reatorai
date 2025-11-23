@@ -28,23 +28,23 @@ export interface YouTubeVideoInfo {
 
 /**
  * Fetch channel information from YouTube API
- * @param channelId - YouTube channel ID
+ * @param _channelId - YouTube channel ID
  * @returns Channel information
  */
-export async function getChannelInfo(channelId: string): Promise<YouTubeChannelInfo> {
+export async function getChannelInfo(_channelId: string): Promise<YouTubeChannelInfo> {
   // TODO: Implement in Milestone 2
   throw new Error('YouTube API integration not yet implemented');
 }
 
 /**
  * Fetch videos from a YouTube channel
- * @param channelId - YouTube channel ID
- * @param maxResults - Maximum number of videos to fetch (default: 50)
+ * @param _channelId - YouTube channel ID
+ * @param _maxResults - Maximum number of videos to fetch (default: 50)
  * @returns Array of video information
  */
 export async function getChannelVideos(
-  channelId: string,
-  maxResults: number = 50
+  _channelId: string,
+  _maxResults: number = 50
 ): Promise<YouTubeVideoInfo[]> {
   // TODO: Implement in Milestone 2
   throw new Error('YouTube API integration not yet implemented');
@@ -52,10 +52,10 @@ export async function getChannelVideos(
 
 /**
  * Parse YouTube channel URL to extract channel ID
- * @param url - YouTube channel URL or handle
+ * @param _url - YouTube channel URL or handle
  * @returns Channel ID
  */
-export function parseChannelUrl(url: string): string {
+export function parseChannelUrl(_url: string): string {
   // TODO: Implement in Milestone 2
   throw new Error('YouTube URL parsing not yet implemented');
 }

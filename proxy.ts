@@ -1,10 +1,11 @@
-// Middleware for authentication
+// Proxy for authentication (Next.js 16 convention)
+// Renamed from middleware.ts to proxy.ts as per Next.js 16 deprecation
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Database } from '@/types/database';
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const res = NextResponse.next();
   const supabase = createMiddlewareClient<Database>({ req, res });
 

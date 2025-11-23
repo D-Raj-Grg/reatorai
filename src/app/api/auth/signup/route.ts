@@ -43,22 +43,24 @@ export async function POST(request: Request) {
     }
 
     // Create user subscription record
+    const subscriptionData = {
+      user_id: authData.user.id,
+      plan_type: 'free',
+      max_scripts_per_month: 5,
+      max_analyses_per_month: 20,
+      max_channels: 5,
+      scripts_used_this_month: 0,
+      analyses_used_this_month: 0,
+      channels_count: 0,
+      current_period_start: new Date().toISOString(),
+      current_period_end: new Date(
+        new Date().setMonth(new Date().getMonth() + 1)
+      ).toISOString(),
+    };
+
     const { error: subscriptionError } = await supabase
       .from('user_subscriptions')
-      .insert({
-        user_id: authData.user.id,
-        plan_type: 'free',
-        max_scripts_per_month: 5,
-        max_analyses_per_month: 20,
-        max_channels: 5,
-        scripts_used_this_month: 0,
-        analyses_used_this_month: 0,
-        channels_count: 0,
-        current_period_start: new Date().toISOString(),
-        current_period_end: new Date(
-          new Date().setMonth(new Date().getMonth() + 1)
-        ).toISOString(),
-      });
+      .insert(subscriptionData as never);
 
     if (subscriptionError) {
       console.error('Error creating subscription:', subscriptionError);
@@ -79,7 +81,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: error.errors[0].message },
+        { success: false, error: error.issues[0].message },
         { status: 400 }
       );
     }

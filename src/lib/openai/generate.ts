@@ -1,5 +1,5 @@
 // AI-powered script generation
-import { openai, DEFAULT_CONFIG } from './client';
+// import { openai, DEFAULT_CONFIG } from './client'; // Will be used in Milestone 4
 
 // Hook formats available
 export const HOOK_FORMATS = [
@@ -44,10 +44,10 @@ export interface ScriptGenerationParams {
 
 /**
  * Generate a viral short-form video script
- * @param params - Script generation parameters
+ * @param _params - Script generation parameters
  * @returns AI-generated script
  */
-export async function generateScript(params: ScriptGenerationParams): Promise<string> {
+export async function generateScript(_params: ScriptGenerationParams): Promise<string> {
   // TODO: Implement in Milestone 4, Epic 4.1
   // This will use GPT-4o to generate custom scripts
   throw new Error('Script generation not yet implemented');
