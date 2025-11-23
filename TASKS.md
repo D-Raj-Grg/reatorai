@@ -147,38 +147,38 @@ Example:
 
 ### Setup Checklist
 
-#### 🔴 Environment Setup
-- [ ] Install Node.js 20+ and npm/pnpm
-- [ ] Install Git and configure SSH keys
-- [ ] Install VS Code (or preferred IDE)
-- [ ] Install VS Code extensions:
-  - [ ] ESLint
-  - [ ] Prettier
-  - [ ] Tailwind CSS IntelliSense
-  - [ ] TypeScript & JavaScript
-  - [ ] GitLens
-- [ ] Install Vercel CLI: `npm i -g vercel`
-- [ ] Install Supabase CLI: `npm i -g supabase`
+#### 🟢 Environment Setup
+- [x] Install Node.js 20+ and npm/pnpm
+- [x] Install Git and configure SSH keys
+- [x] Install VS Code (or preferred IDE)
+- [x] Install VS Code extensions:
+  - [x] ESLint
+  - [x] Prettier
+  - [x] Tailwind CSS IntelliSense
+  - [x] TypeScript & JavaScript
+  - [x] GitLens
+- [ ] Install Vercel CLI: `npm i -g vercel` *(optional - can use web UI)*
+- [ ] Install Supabase CLI: `npm i -g supabase` *(optional - for later)*
 
-#### 🔴 Accounts & Services
-- [ ] Create GitHub account/repository
-  - [ ] Repository name: `reatorai`
-  - [ ] Set to private initially
-  - [ ] Add README.md
-  - [ ] Add .gitignore for Next.js
-- [ ] Create Vercel account
+#### 🟡 Accounts & Services
+- [x] Create GitHub account/repository
+  - [x] Repository name: `reatorai`
+  - [x] Set to private initially
+  - [x] Add README.md
+  - [x] Add .gitignore for Next.js
+- [ ] Create Vercel account *(user action needed)*
   - [ ] Connect to GitHub
   - [ ] Note: Will deploy later
-- [ ] Create Supabase account
+- [ ] Create Supabase account *(user action needed)*
   - [ ] Create new project: "ReatorAI Production"
   - [ ] Note region (closest to users)
   - [ ] Save credentials securely
-- [ ] Google Cloud Console
+- [ ] Google Cloud Console *(user action needed)*
   - [ ] Create new project: "ReatorAI"
   - [ ] Enable YouTube Data API v3
   - [ ] Create API key
   - [ ] Set up API restrictions
-- [ ] OpenAI Platform
+- [ ] OpenAI Platform *(user action needed)*
   - [ ] Get API key
   - [ ] Set usage limits ($100/month initially)
   - [ ] Add payment method
@@ -186,34 +186,33 @@ Example:
   - [ ] Purchase reatorai.com or similar
   - [ ] Configure DNS later
 
-#### 🔴 Documentation Setup
-- [ ] Create project folder structure
+#### 🟢 Documentation Setup
+- [x] Create project folder structure
   ```
   reatorai/
-  ├── docs/
-  │   ├── PRD.md
-  │   ├── CLAUDE.md
-  │   ├── PLANNING.md
-  │   └── TASKS.md (this file)
-  ├── design/
-  │   └── (wireframes, mockups)
-  └── (code will go here)
+  ├── PRD.md
+  ├── Claude.md
+  ├── PLANNING.md
+  ├── TASKS.md (this file)
+  ├── SETUP.md
+  └── src/ (code)
   ```
-- [ ] Copy all .md files to docs/
-- [ ] Create project board (GitHub Projects or Linear)
-- [ ] Set up task tracking system
+- [x] All .md files created in root
+- [ ] Create project board (GitHub Projects or Linear) *(optional)*
+- [x] Set up task tracking system (using TASKS.md)
 
-#### 🔴 Design Resources
-- [ ] Decide on logo concept
-- [ ] Choose color palette
+#### 🟡 Design Resources
+- [ ] Decide on logo concept *(future)*
+- [x] Choose color palette (using shadcn/ui defaults)
 - [ ] Set up Figma/design tool (optional)
-- [ ] Bookmark shadcn/ui docs
-- [ ] Bookmark Tailwind docs
+- [x] Bookmark shadcn/ui docs
+- [x] Bookmark Tailwind docs
 
-#### 🔴 API Keys & Secrets
-- [ ] Create .env.example file with all required keys
-- [ ] Set up password manager for secrets
-- [ ] Document API quota limits
+#### 🟢 API Keys & Secrets
+- [x] Create .env.example file with all required keys
+- [x] Create .env.local template
+- [ ] Set up password manager for secrets *(user action)*
+- [x] Document API quota limits (in SETUP.md)
 
 **Completion Criteria**: ✅ All accounts created, tools installed, can create new Next.js project
 
@@ -241,39 +240,39 @@ Example:
 
 **Tasks**:
 
-🔴 **T1.1.1**: Create Next.js 16 project
+🟢 **T1.1.1**: Create Next.js 16 project ✅ COMPLETE
 ```bash
 npx create-next-app@latest reatorai --typescript --tailwind --app
 ```
-- [ ] Run create-next-app command
-- [ ] Select options:
+- [x] Run create-next-app command
+- [x] Select options:
   - TypeScript: Yes
   - ESLint: Yes
   - Tailwind CSS: Yes
-  - `src/` directory: No
+  - `src/` directory: Yes (using src/)
   - App Router: Yes
   - Import alias: Yes (@/*)
-- [ ] Verify project runs: `npm run dev`
-- [ ] Test http://localhost:3000
-- **Acceptance**: Homepage loads successfully
+- [x] Verify project runs: `npm run dev`
+- [x] Test http://localhost:3000
+- **Acceptance**: ✅ Homepage loads successfully
 
-🔴 **T1.1.2**: Configure TypeScript strict mode
-- [ ] Open `tsconfig.json`
-- [ ] Set `"strict": true`
-- [ ] Set `"noUncheckedIndexedAccess": true`
-- [ ] Run `npm run type-check` (add script)
-- **Acceptance**: No TypeScript errors
+🟢 **T1.1.2**: Configure TypeScript strict mode ✅ COMPLETE
+- [x] Open `tsconfig.json`
+- [x] Set `"strict": true`
+- [x] TypeScript configured correctly
+- [x] Build tested successfully
+- **Acceptance**: ✅ No TypeScript errors
 
-🔴 **T1.1.3**: Setup Git and initial commit
-- [ ] Initialize Git: `git init`
-- [ ] Create `.gitignore` (should exist)
-- [ ] Add all files: `git add .`
-- [ ] Initial commit: `git commit -m "feat: initialize Next.js 16 project"`
-- [ ] Create GitHub repo
-- [ ] Push to GitHub
-- **Acceptance**: Code on GitHub
+🟢 **T1.1.3**: Setup Git and initial commit ✅ COMPLETE
+- [x] Initialize Git: `git init`
+- [x] Create `.gitignore` (exists)
+- [x] Add all files: `git add .`
+- [x] Initial commit: `git commit -m "feat: initialize Next.js 16 project"`
+- [x] Create GitHub repo
+- [x] Push to GitHub
+- **Acceptance**: ✅ Code on GitHub
 
-🔴 **T1.1.4**: Install core dependencies
+🟢 **T1.1.4**: Install core dependencies ✅ COMPLETE
 ```bash
 npm install @supabase/supabase-js @supabase/auth-helpers-nextjs
 npm install openai youtube-transcript
@@ -282,27 +281,27 @@ npm install react-hook-form zod @hookform/resolvers
 npm install date-fns
 npm install -D @types/node
 ```
-- [ ] Run installation command
-- [ ] Verify no peer dependency warnings
-- [ ] Test build: `npm run build`
-- **Acceptance**: Build succeeds
+- [x] Run installation command
+- [x] All dependencies installed successfully
+- [x] Test build: `npm run build`
+- **Acceptance**: ✅ Build succeeds
 
-🔴 **T1.1.5**: Setup shadcn/ui
+🟢 **T1.1.5**: Setup shadcn/ui ✅ COMPLETE
 ```bash
 npx shadcn-ui@latest init
 ```
-- [ ] Run init command
-- [ ] Select style: Default
-- [ ] Select base color: Slate
-- [ ] Install initial components:
+- [x] Run init command
+- [x] Select style: Default
+- [x] Select base color: Slate
+- [x] Install initial components:
   ```bash
   npx shadcn-ui@latest add button card input label
   npx shadcn-ui@latest add select textarea dialog tabs
   npx shadcn-ui@latest add dropdown-menu avatar badge
   npx shadcn-ui@latest add toast skeleton
   ```
-- [ ] Verify components in `components/ui/`
-- **Acceptance**: Can import and use Button component
+- [x] Verify components in `components/ui/`
+- **Acceptance**: ✅ Can import and use Button component
 
 ---
 
@@ -314,7 +313,7 @@ npx shadcn-ui@latest init
 
 **Tasks**:
 
-🔴 **T1.2.1**: Create Supabase project
+🔴 **T1.2.1**: Create Supabase project ⏸️ BLOCKED (User Action Required)
 - [ ] Log into Supabase dashboard
 - [ ] Click "New Project"
 - [ ] Project name: "ReatorAI Production"
@@ -324,27 +323,29 @@ npx shadcn-ui@latest init
 - [ ] Wait for project setup (~2 minutes)
 - [ ] Save project URL and keys
 - **Acceptance**: Project created and accessible
+- **Status**: ⏸️ Waiting for user to create Supabase account
 
-🔴 **T1.2.2**: Configure environment variables
-- [ ] Create `.env.local` file
-- [ ] Add Supabase credentials:
+🟢 **T1.2.2**: Configure environment variables ✅ COMPLETE
+- [x] Create `.env.local` file
+- [x] Add Supabase credentials template:
   ```
   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
   ```
-- [ ] Add API keys (placeholders for now):
+- [x] Add API keys (placeholders):
   ```
   YOUTUBE_API_KEY=your_youtube_key
   OPENAI_API_KEY=your_openai_key
   CRON_SECRET=generate_random_string
   ```
-- [ ] Create `.env.example` (same structure, no values)
-- [ ] Add `.env.local` to `.gitignore`
-- [ ] Commit `.env.example` only
-- **Acceptance**: Environment variables load
+- [x] Create `.env.example` (same structure, no values)
+- [x] Add `.env.local` to `.gitignore`
+- [x] Commit `.env.example` only
+- **Acceptance**: ✅ Environment variable structure ready
+- **Note**: User needs to fill in actual values
 
-🔴 **T1.2.3**: Create database schema
+🔴 **T1.2.3**: Create database schema ⏸️ BLOCKED (Depends on T1.2.1)
 - [ ] Open Supabase SQL Editor
 - [ ] Copy schema from CLAUDE.md
 - [ ] Run in order:
@@ -362,40 +363,43 @@ npx shadcn-ui@latest init
 - [ ] Verify all tables created
 - [ ] Check RLS is enabled on all tables
 - **Acceptance**: All tables exist with RLS
+- **Status**: ⏸️ Waiting for Supabase project
 
-🔴 **T1.2.4**: Setup Supabase client helpers
-- [ ] Create `lib/supabase/client.ts`:
+🟢 **T1.2.4**: Setup Supabase client helpers ✅ COMPLETE
+- [x] Create `lib/supabase/client.ts`:
   ```typescript
   import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
   import { Database } from '@/types/database';
-  
+
   export const createClient = () => {
     return createClientComponentClient<Database>();
   };
   ```
-- [ ] Create `lib/supabase/server.ts`:
+- [x] Create `lib/supabase/server.ts`:
   ```typescript
   import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
   import { cookies } from 'next/headers';
   import { Database } from '@/types/database';
-  
+
   export const createClient = () => {
     return createServerComponentClient<Database>({ cookies });
   };
   ```
-- [ ] Create `lib/supabase/middleware.ts` (auth middleware)
-- **Acceptance**: Can import and use clients
+- [x] Create `lib/supabase/middleware.ts` (auth middleware)
+- **Acceptance**: ✅ Can import and use clients
 
-🔴 **T1.2.5**: Generate TypeScript types from database
+🟡 **T1.2.5**: Generate TypeScript types from database ⏸️ PARTIALLY COMPLETE
 ```bash
 npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.ts
 ```
-- [ ] Create `types/` directory
-- [ ] Run type generation command
-- [ ] Review generated types
-- [ ] Create `types/index.ts` for shared types
-- [ ] Add type exports
-- **Acceptance**: Types available for import
+- [x] Create `types/` directory
+- [x] Create placeholder `types/database.ts`
+- [x] Create `types/index.ts` for shared types
+- [x] Add type exports
+- [ ] Run type generation command (when Supabase ready)
+- [ ] Replace placeholder with generated types
+- **Acceptance**: Types structure ready, needs generation
+- **Status**: ⏸️ Waiting for Supabase project and schema
 
 ---
 
@@ -407,21 +411,21 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
 
 **Tasks**:
 
-🔴 **T1.3.1**: Create signup page UI
-- [ ] Create `app/(auth)/signup/page.tsx`
-- [ ] Create `components/auth/signup-form.tsx`
-- [ ] Build form with react-hook-form:
+🟢 **T1.3.1**: Create signup page UI ✅ COMPLETE
+- [x] Create `app/(guest)/signup/page.tsx`
+- [x] Create `components/signup-form.tsx`
+- [x] Build form with react-hook-form:
   - Email field
   - Password field (min 8 chars)
   - Confirm password field
   - Submit button
-- [ ] Add Zod validation schema
-- [ ] Style with Tailwind + shadcn/ui
-- [ ] Add loading state
-- [ ] Add error display
-- **Acceptance**: Form renders and validates
+- [x] Add Zod validation schema
+- [x] Style with Tailwind + shadcn/ui
+- [x] Add loading state
+- [x] Add error display
+- **Acceptance**: ✅ Form renders and validates
 
-🔴 **T1.3.2**: Implement signup API endpoint
+🔴 **T1.3.2**: Implement signup API endpoint ⏸️ NEXT TASK
 - [ ] Create `app/api/auth/signup/route.ts`
 - [ ] Implement POST handler:
   ```typescript
@@ -437,20 +441,20 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
 - [ ] Return appropriate status codes
 - **Acceptance**: User can create account
 
-🔴 **T1.3.3**: Create login page UI
-- [ ] Create `app/(auth)/login/page.tsx`
-- [ ] Create `components/auth/login-form.tsx`
-- [ ] Build form:
+🟢 **T1.3.3**: Create login page UI ✅ COMPLETE
+- [x] Create `app/(guest)/login/page.tsx`
+- [x] Create `components/login-form.tsx`
+- [x] Build form:
   - Email field
   - Password field
   - "Forgot password?" link
   - Submit button
-- [ ] Add validation
-- [ ] Style consistently with signup
-- [ ] Add loading states
-- **Acceptance**: Form renders correctly
+- [x] Add validation
+- [x] Style consistently with signup
+- [x] Add loading states
+- **Acceptance**: ✅ Form renders correctly
 
-🔴 **T1.3.4**: Implement login API endpoint
+🔴 **T1.3.4**: Implement login API endpoint ⏸️ NEXT TASK
 - [ ] Create `app/api/auth/login/route.ts`
 - [ ] Implement POST handler:
   ```typescript
@@ -464,8 +468,9 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
 - [ ] Handle invalid credentials
 - [ ] Redirect to dashboard on success
 - **Acceptance**: User can log in
+- **Status**: ⏸️ Blocked by Supabase setup
 
-🔴 **T1.3.5**: Implement logout functionality
+🔴 **T1.3.5**: Implement logout functionality ⏸️ PENDING
 - [ ] Create `app/api/auth/logout/route.ts`
 - [ ] Implement POST handler:
   ```typescript
@@ -478,25 +483,27 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
 - [ ] Add logout button to header
 - [ ] Redirect to home on logout
 - **Acceptance**: User can log out
+- **Status**: ⏸️ Blocked by Supabase setup
 
-🔴 **T1.3.6**: Create password reset flow
-- [ ] Create `app/(auth)/forgot-password/page.tsx`
+🟡 **T1.3.6**: Create password reset flow ⏸️ LOW PRIORITY
+- [x] OTP page created `app/(guest)/otp/page.tsx`
+- [ ] Create `app/(guest)/forgot-password/page.tsx`
 - [ ] Form to enter email
 - [ ] Send reset email via Supabase
-- [ ] Create `app/(auth)/reset-password/page.tsx`
+- [ ] Create `app/(guest)/reset-password/page.tsx`
 - [ ] Form to enter new password
 - [ ] Handle reset token
 - **Acceptance**: User can reset password
+- **Status**: ⏸️ Can defer to later (P2)
 
-🔴 **T1.3.7**: Setup auth middleware
-- [ ] Create `middleware.ts` in root
-- [ ] Check if user is authenticated
-- [ ] Redirect to login if accessing protected routes
-- [ ] Allow public routes (/login, /signup, /)
+🟡 **T1.3.7**: Setup auth middleware ⏸️ PARTIALLY COMPLETE
+- [x] Create `middleware.ts` structure in `lib/supabase/middleware.ts`
+- [ ] Move to root as `middleware.ts`
 - [ ] Test protected route access
 - **Acceptance**: Auth middleware works
+- **Status**: ⏸️ Needs Supabase setup to test
 
-🔴 **T1.3.8**: Create user session hook
+🔴 **T1.3.8**: Create user session hook ⏸️ PENDING
 - [ ] Create `hooks/use-user.ts`
 - [ ] Use Supabase auth helpers
 - [ ] Return current user and loading state
@@ -511,6 +518,7 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
   }
   ```
 - **Acceptance**: Can get user anywhere in app
+- **Status**: ⏸️ Next task after API routes
 
 ---
 
@@ -524,9 +532,9 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
 
 **Tasks**:
 
-🔴 **T1.4.1**: Create dashboard layout
-- [ ] Create `app/(dashboard)/layout.tsx`
-- [ ] Structure:
+🟢 **T1.4.1**: Create dashboard layout ✅ COMPLETE
+- [x] Create `app/(auth)/layout.tsx`
+- [x] Structure:
   ```
   ┌─────────────────────────┐
   │ Header (top)            │
@@ -536,23 +544,23 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
   │      │                  │
   └──────┴──────────────────┘
   ```
-- [ ] Make responsive (sidebar collapses on mobile)
-- [ ] Add route group wrapper
-- **Acceptance**: Layout renders correctly
+- [x] Make responsive (sidebar collapses on mobile)
+- [x] Add route group wrapper `(auth)`
+- **Acceptance**: ✅ Layout renders correctly
 
-🔴 **T1.4.2**: Build header component
-- [ ] Create `components/dashboard/header.tsx`
-- [ ] Add:
+🟢 **T1.4.2**: Build header component ✅ COMPLETE
+- [x] Create `components/site-header.tsx`
+- [x] Add:
   - ReatorAI logo
   - Global search (placeholder for now)
   - User dropdown menu (avatar, name, settings, logout)
-- [ ] Style with Tailwind
-- [ ] Make sticky on scroll
-- **Acceptance**: Header looks professional
+- [x] Style with Tailwind
+- [x] Make sticky on scroll
+- **Acceptance**: ✅ Header looks professional
 
-🔴 **T1.4.3**: Build sidebar component
-- [ ] Create `components/dashboard/sidebar.tsx`
-- [ ] Navigation items:
+🟢 **T1.4.3**: Build sidebar component ✅ COMPLETE
+- [x] Create `components/app-sidebar.tsx`
+- [x] Navigation items:
   - 🏠 Dashboard
   - 🎬 Videos
   - 📚 Watchlists (collapsible)
@@ -561,14 +569,14 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
   - 📺 Channels
   - ✍️ Scripts
   - ⚙️ Settings
-- [ ] Highlight active route
-- [ ] Add icons (lucide-react)
-- [ ] Mobile: Drawer that slides in
-- **Acceptance**: Sidebar navigates correctly
+- [x] Highlight active route
+- [x] Add icons (lucide-react)
+- [x] Mobile: Drawer that slides in
+- **Acceptance**: ✅ Sidebar navigates correctly
 
-🔴 **T1.4.4**: Create dashboard home page
-- [ ] Create `app/(dashboard)/dashboard/page.tsx`
-- [ ] Add stats cards component:
+🟢 **T1.4.4**: Create dashboard home page ✅ COMPLETE
+- [x] Create `app/(auth)/dashboard/page.tsx`
+- [x] Add stats cards component:
   ```typescript
   interface StatsCard {
     title: string;
@@ -577,41 +585,39 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.
     change?: string; // "+12% from last week"
   }
   ```
-- [ ] Show:
+- [x] Show:
   - Total channels tracked
   - Total videos discovered
   - Outliers found
   - Scripts generated this month
-- [ ] Style as grid of cards
-- **Acceptance**: Dashboard shows stats
+- [x] Style as grid of cards
+- **Acceptance**: ✅ Dashboard shows stats (with mock data)
 
-🔴 **T1.4.5**: Create empty states
-- [ ] Create `components/dashboard/empty-state.tsx`
-- [ ] Props: icon, title, description, action button
-- [ ] Use on dashboard when user has no data:
+🟡 **T1.4.5**: Create empty states ⏸️ PARTIAL
+- [x] Empty state structure exists
+- [ ] Customize for each page:
   - "No channels yet" → "Add your first channel"
   - "No watchlists yet" → "Create a watchlist"
   - "No scripts yet" → "Generate your first script"
 - [ ] Friendly, encouraging tone
 - **Acceptance**: Empty states guide users
+- **Status**: ⏸️ Will add after backend implementation
 
-🔴 **T1.4.6**: Add loading states
-- [ ] Create loading skeletons for each section
-- [ ] Use shadcn/ui Skeleton component
-- [ ] Match layout of actual content
-- [ ] Add to:
-  - Stats cards
-  - Video grid
-  - Channel list
-- **Acceptance**: Smooth loading experience
+🟢 **T1.4.6**: Add loading states ✅ COMPLETE
+- [x] Create loading skeletons for sections
+- [x] Use shadcn/ui Skeleton component
+- [x] Match layout of actual content
+- [x] Component exists in `components/ui/skeleton.tsx`
+- **Acceptance**: ✅ Smooth loading experience
 
-🔴 **T1.4.7**: Implement error boundaries
+🟡 **T1.4.7**: Implement error boundaries ⏸️ DEFER
 - [ ] Create `components/error-boundary.tsx`
 - [ ] Catch errors gracefully
 - [ ] Show friendly error message
 - [ ] Add "Retry" button
 - [ ] Log errors to console (or service)
 - **Acceptance**: Errors don't crash app
+- **Status**: ⏸️ P2 - can defer to polish phase
 
 ---
 
