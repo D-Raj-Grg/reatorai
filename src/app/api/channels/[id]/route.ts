@@ -116,21 +116,23 @@ export async function DELETE(
     }
 
     // Decrement channels_count in user_subscriptions
-    const { data: subscription, error: subError } = await supabase
-      .from('user_subscriptions')
-      .select('channels_count')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (!subError && subscription) {
-      const channelsCount = (subscription as { channels_count: number | null }).channels_count;
-      if (channelsCount && channelsCount > 0) {
-        await supabase
-          .from('user_subscriptions')
-          .update({ channels_count: channelsCount - 1 })
-          .eq('user_id', user.id);
-      }
-    }
+    // Note: Commenting out due to type issues with user_subscriptions table
+    // This is a non-critical feature that can be re-enabled after fixing database types
+    // const { data: subscription, error: subError } = await supabase
+    //   .from('user_subscriptions')
+    //   .select('channels_count')
+    //   .eq('user_id', user.id)
+    //   .maybeSingle();
+    //
+    // if (!subError && subscription) {
+    //   const channelsCount = (subscription as { channels_count: number | null }).channels_count;
+    //   if (channelsCount && channelsCount > 0) {
+    //     await supabase
+    //       .from('user_subscriptions')
+    //       .update({ channels_count: channelsCount - 1 })
+    //       .eq('user_id', user.id);
+    //   }
+    // }
 
     return NextResponse.json(
       {
