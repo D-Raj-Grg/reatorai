@@ -7,4 +7,4 @@ export const createClient = () => {
 };
 
 // Re-export for convenience
-export const supabase = createClient();
+export const supabase = await createClient();;

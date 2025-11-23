@@ -1,8 +1,17 @@
 import { ReactNode } from "react"
+import { redirect } from "next/navigation"
+import { createClient } from "@/lib/supabase/server"
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
-  // TODO: Add authentication check here
-  // Redirect to /login if not authenticated
+export default async function AuthLayout({ children }: { children: ReactNode }) {
+  const supabase = await createClient()
+
+  // Check if user is authenticated
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // If not authenticated, redirect to login
+  if (!user) {
+    redirect("/login")
+  }
 
   return <>{children}</>
 }

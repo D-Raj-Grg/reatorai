@@ -50,7 +50,7 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
   };
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();;
 
     // 1. Get channel info from database
     const { data, error: channelError } = await supabase
@@ -174,7 +174,7 @@ export async function syncChannelVideos(channelId: string): Promise<SyncResult> 
  * Detect outliers and update videos table
  */
 async function detectAndMarkOutliers(channelId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();;
 
   // Get all videos for this channel
   const { data: videos } = await supabase
@@ -235,7 +235,7 @@ async function detectAndMarkOutliers(channelId: string): Promise<void> {
  * Fetch transcripts for outlier videos that don't have one
  */
 async function fetchTranscriptsForOutliers(channelId: string): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createClient();;
   let transcriptsFetched = 0;
 
   // Get outlier videos without transcripts
@@ -326,7 +326,7 @@ export async function syncChannelsBatch(
  * @returns Array of channel IDs
  */
 export async function getChannelsNeedingSync(limit: number = 10): Promise<string[]> {
-  const supabase = createClient();
+  const supabase = await createClient();;
   const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
 
   const { data: channels } = await supabase
@@ -347,7 +347,7 @@ export async function getChannelsNeedingSync(limit: number = 10): Promise<string
  * @returns Array of sync results
  */
 export async function syncUserChannels(userId: string): Promise<SyncResult[]> {
-  const supabase = createClient();
+  const supabase = await createClient();;
 
   // Get all user's channels
   const { data: channels } = await supabase
@@ -373,7 +373,7 @@ export async function getChannelSyncStats(channelId: string): Promise<{
   videosWithTranscripts: number;
   lastSyncedAt: string | null;
 } | null> {
-  const supabase = createClient();
+  const supabase = await createClient();;
 
   const { data: channel } = await supabase
     .from('channels')

@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { id: watchlistId } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,

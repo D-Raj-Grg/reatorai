@@ -32,7 +32,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // 1. Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -124,7 +124,6 @@ export async function POST(
     // 8. Store analysis in database
     const { data: savedAnalysis, error: saveError } = await supabase
       .from('video_analyses')
-      // @ts-expect-error - Supabase type inference issues with insert
       .insert({
         video_id: id,
         user_id: user.id,
@@ -189,7 +188,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();;
 
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();

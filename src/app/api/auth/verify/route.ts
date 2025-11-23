@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const { code } = validatedData;
 
     // Create Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();;
 
     // Exchange code for session
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);

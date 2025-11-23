@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const { email } = validatedData;
 
     // Create Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Send password reset email
     const { error } = await supabase.auth.resetPasswordForEmail(email, {

@@ -16,7 +16,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
@@ -86,7 +86,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
@@ -117,7 +117,6 @@ export async function PATCH(
     // Update watchlist
     const { data: watchlist, error } = await supabase
       .from('watchlists')
-      // @ts-expect-error - Supabase type inference issues
       .update(validatedData)
       .eq('id', id)
       .eq('user_id', user.id)
@@ -161,7 +160,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,

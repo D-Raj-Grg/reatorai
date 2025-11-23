@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const { password } = validatedData;
 
     // Create Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();;
 
     // Update user's password
     const { data, error } = await supabase.auth.updateUser({

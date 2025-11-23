@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
@@ -75,7 +75,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,

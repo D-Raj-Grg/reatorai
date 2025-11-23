@@ -7,7 +7,7 @@ export async function DELETE(
 ) {
   try {
     const { id: watchlistId, channelId } = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
