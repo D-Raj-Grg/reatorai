@@ -103,11 +103,11 @@
 **Epic 1.5: Deployment Preparation (T1.5.1 COMPLETE)**
 - ✅ Production build tested successfully (19.1s compile time)
 - ✅ Production server verified (732ms startup)
-- ✅ vercel.json created for cron jobs
-- ✅ .env.example verified complete
+- ✅ vercel.json created for cron jobs (daily sync at 2 AM for Hobby plan)
+- ✅ .env.example verified and cleaned up (removed unnecessary CRON_SECRET)
 - ✅ All changes committed and pushed to GitHub
 - ✅ Zero build errors or warnings
-- ✅ Ready for Vercel deployment
+- ✅ Ready for Vercel deployment (Hobby plan compatible)
 
 ### 🟢 Previously Completed (Nov 23, 2025 - Earlier)
 
@@ -1261,30 +1261,22 @@ npx shadcn-ui@latest init
 - **Acceptance**: User can manually sync
 
 🔴 **T3.1.5**: Setup Vercel Cron Job
+- [x] Create `vercel.json` (already done in T1.5.1)
 - [ ] Create `app/api/cron/sync-videos/route.ts`
 - [ ] Implement GET handler:
   ```typescript
   export async function GET(request: Request) {
-    // 1. Verify cron secret
+    // 1. Verify request is from Vercel (optional - built-in security)
     // 2. Fetch channels ordered by last_synced_at
     // 3. Sync 10 channels (batch)
     // 4. Return stats
   }
   ```
-- [ ] Add to `vercel.json`:
-  ```json
-  {
-    "crons": [
-      {
-        "path": "/api/cron/sync-videos",
-        "schedule": "0 */6 * * *"
-      }
-    ]
-  }
-  ```
 - [ ] Test cron locally
 - [ ] Deploy and verify
-- **Acceptance**: Videos sync every 6 hours
+- **Acceptance**: Videos sync daily at 2 AM (Hobby plan)
+- **Note**: Upgraded from CRON_SECRET to Vercel's built-in auth
+- **Note**: Changed from 6-hour to daily sync for Hobby plan compatibility
 
 🔴 **T3.1.6**: Add sync status indicators
 - [ ] Show "Syncing..." badge on channels
