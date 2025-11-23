@@ -11,9 +11,10 @@ import { syncChannelVideos } from '@/lib/sync/sync-channel-videos';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // 1. Get authenticated user
@@ -29,7 +30,7 @@ export async function POST(
     const { data: channel, error: channelError } = await supabase
       .from('channels')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (channelError || !channel) {
@@ -69,7 +70,7 @@ export async function POST(
     // 4. Perform sync
     console.log(`Manual sync requested for channel ${channel.channel_name} by user ${user.id}`);
 
-    const syncResult = await syncChannelVideos(params.id);
+    const syncResult = await syncChannelVideos(id);
 
     if (!syncResult.success) {
       return NextResponse.json(
@@ -123,9 +124,10 @@ export async function POST(
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // Get authenticated user
@@ -141,7 +143,7 @@ export async function GET(
     const { data: channel, error: channelError } = await supabase
       .from('channels')
       .select('id, channel_name, last_synced_at, user_id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (channelError || !channel) {
@@ -176,12 +178,12 @@ export async function GET(
     const { count: totalVideos } = await supabase
       .from('videos')
       .select('id', { count: 'exact', head: true })
-      .eq('channel_id', params.id);
+      .eq('channel_id', id);
 
     const { count: outliers } = await supabase
       .from('videos')
       .select('id', { count: 'exact', head: true })
-      .eq('channel_id', params.id)
+      .eq('channel_id', id)
       .eq('is_outlier', true);
 
     return NextResponse.json({

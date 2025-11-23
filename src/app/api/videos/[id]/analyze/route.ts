@@ -12,9 +12,10 @@ import { canAnalyzeVideo, trackAnalysis } from '@/lib/usage/track';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // 1. Get authenticated user
@@ -51,7 +52,7 @@ export async function POST(
           user_id
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (videoError || !video) {
@@ -81,7 +82,7 @@ export async function POST(
     const { data: existingAnalysis } = await supabase
       .from('video_analyses')
       .select('*')
-      .eq('video_id', params.id)
+      .eq('video_id', id)
       .single();
 
     if (existingAnalysis) {
@@ -106,7 +107,7 @@ export async function POST(
     const { data: savedAnalysis, error: saveError } = await supabase
       .from('video_analyses')
       .insert({
-        video_id: params.id,
+        video_id: id,
         user_id: user.id,
         hook_analysis: analysisResult.hookAnalysis,
         storytelling_analysis: analysisResult.storytellingAnalysis,
@@ -165,9 +166,10 @@ export async function POST(
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // Get authenticated user
@@ -183,7 +185,7 @@ export async function GET(
     const { data: analysis, error } = await supabase
       .from('video_analyses')
       .select('*')
-      .eq('video_id', params.id)
+      .eq('video_id', id)
       .eq('user_id', user.id)
       .single();
 

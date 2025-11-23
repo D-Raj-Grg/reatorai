@@ -116,17 +116,20 @@ export async function DELETE(
     }
 
     // Decrement channels_count in user_subscriptions
-    const { data: subscription } = await supabase
+    const { data: subscription, error: subError } = await supabase
       .from('user_subscriptions')
       .select('channels_count')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (subscription && subscription.channels_count > 0) {
-      await supabase
-        .from('user_subscriptions')
-        .update({ channels_count: subscription.channels_count - 1 })
-        .eq('user_id', user.id);
+    if (!subError && subscription) {
+      const channelsCount = (subscription as { channels_count: number | null }).channels_count;
+      if (channelsCount && channelsCount > 0) {
+        await supabase
+          .from('user_subscriptions')
+          .update({ channels_count: channelsCount - 1 })
+          .eq('user_id', user.id);
+      }
     }
 
     return NextResponse.json(
