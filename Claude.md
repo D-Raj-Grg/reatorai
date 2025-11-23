@@ -288,8 +288,7 @@ reatorai/
 ├── lib/
 │   ├── supabase/
 │   │   ├── client.ts          # Client-side Supabase
-│   │   ├── server.ts          # Server-side Supabase
-│   │   └── middleware.ts      # Auth middleware
+│   │   └── server.ts          # Server-side Supabase
 │   ├── youtube/
 │   │   ├── api.ts             # YouTube Data API
 │   │   └── transcript.ts      # Transcript extraction
@@ -320,6 +319,7 @@ reatorai/
 │
 ├── .env.local                 # Environment variables
 ├── .env.example               # Example env file
+├── proxy.ts                   # Auth proxy (Next.js 16 convention)
 ├── next.config.js             # Next.js config
 ├── tailwind.config.js         # Tailwind config
 ├── tsconfig.json              # TypeScript config
