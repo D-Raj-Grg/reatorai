@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 import { OTPForm } from "@/components/otp-form"
 
 export default function OTPPage() {
@@ -9,12 +11,11 @@ export default function OTPPage() {
         </div>
       </div>
       <div className="relative hidden w-1/2 lg:block">
-        <img
+        <Image
           alt="Authentication"
-          className="absolute inset-0 h-full w-full object-cover"
-          height={1080}
+          fill
+          className="object-cover"
           src="/placeholder.svg"
-          width={1920}
         />
       </div>
     </div>
