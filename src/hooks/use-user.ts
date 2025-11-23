@@ -4,10 +4,10 @@ import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
-export async function useUser() {
+export function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = await createClient();;
+  const supabase = createClient();
 
   useEffect(() => {
     // Get initial session

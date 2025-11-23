@@ -1,4 +1,8 @@
+"use client"
+
 import Link from "next/link";
+import { useRef } from "react";
+import { useTheme } from "next-themes";
 import { ArrowRight, Sparkles, Zap, Target, TrendingUp, Clock, Video, FileText, BarChart3, Users, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,11 +13,23 @@ import { BorderBeam } from "@/components/ui/border-beam";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { WordRotate } from "@/components/ui/word-rotate";
 import { RetroGrid } from "@/components/ui/retro-grid";
-import { Marquee } from "@/components/ui/marquee";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
+import { AnimatedBeam } from "@/components/ui/animated-beam";
+import { ShineBorder } from "@/components/ui/shine-border";
+import { NavigationDock } from "@/components/navigation-dock";
 
 export default function Home() {
+  const { theme } = useTheme();
+
+  // Refs for AnimatedBeam demo
+  const containerRef = useRef<HTMLDivElement>(null);
+  const div1Ref = useRef<HTMLDivElement>(null);
+  const div2Ref = useRef<HTMLDivElement>(null);
+  const div3Ref = useRef<HTMLDivElement>(null);
+  const div4Ref = useRef<HTMLDivElement>(null);
+
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       {/* Theme Toggle */}
@@ -21,59 +37,29 @@ export default function Home() {
         <ThemeToggle />
       </div>
 
-      {/* Navigation */}
-      <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">ReatorAI</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="#features" className="text-sm font-medium transition-colors hover:text-primary">
-              Features
-            </Link>
-            <Link href="#how-it-works" className="text-sm font-medium transition-colors hover:text-primary">
-              How It Works
-            </Link>
-            <Link href="#pricing" className="text-sm font-medium transition-colors hover:text-primary">
-              Pricing
-            </Link>
-          </nav>
-          <div className="flex items-center gap-4">
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log In
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm">
-                Get Started
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Floating Dock Navigation */}
+      <NavigationDock />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-border/40">
         <RetroGrid className="opacity-50" />
         <Particles
-          className="absolute inset-0 z-10"
-          quantity={100}
-          ease={80}
-          color="#60a5fa"
+          className="absolute inset-0 z-10 will-change-transform"
+          quantity={15}
+          ease={120}
+          color={theme === 'dark' ? '#60a5fa' : '#3b82f6'}
           refresh={false}
         />
-        <div className="container relative z-20 flex flex-col items-center justify-center px-4 py-24 md:py-32 lg:py-40">
-          <Badge className="mb-4 animate-fade-in-up" variant="secondary">
+        <div className="container relative z-20 flex flex-col items-center justify-center px-4 py-32 md:py-40 lg:py-48 max-w-6xl mx-auto">
+          <Badge className="mb-6 animate-fade-in-up" variant="secondary">
             <Zap className="mr-1 h-3 w-3" />
             AI-Powered Content Research
           </Badge>
-          <h1 className="max-w-4xl text-center text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-up">
+          <h1 className="max-w-3xl text-center text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-up">
             Turn{" "}
             <WordRotate
               words={["Viral Videos", "Trending Content", "Popular Shorts", "Viral Reels"]}
-              className="inline-block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"
+              className="inline-block bg-gradient-to-r from-primary via-accent to-primary dark:from-primary/90 dark:via-accent/90 dark:to-primary/90 bg-clip-text text-transparent"
               duration={3000}
             />{" "}
             Into Winning Scripts
@@ -85,8 +71,10 @@ export default function Home() {
             <Link href="/signup">
               <ShimmerButton
                 className="text-base font-semibold px-8 py-6"
-                shimmerColor="#60a5fa"
-                background="linear-gradient(to right, #3b82f6, #8b5cf6)"
+                shimmerColor={theme === 'dark' ? '#60a5fa' : '#3b82f6'}
+                background={theme === 'dark'
+                  ? "linear-gradient(to right, #60a5fa, #a78bfa)"
+                  : "linear-gradient(to right, #3b82f6, #8b5cf6)"}
               >
                 <span className="flex items-center gap-2">
                   Start Free Trial
@@ -100,21 +88,84 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-          <div className="mt-12 flex items-center gap-6 text-sm text-muted-foreground animate-fade-in-up">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground animate-fade-in-up">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
               No credit card required
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
               10 free scripts/month
             </div>
           </div>
         </div>
       </section>
 
+      {/* Stats Banner */}
+      <section className="relative bg-muted/20 border-b border-border/40">
+        <div className="container max-w-6xl mx-auto px-4 py-16 md:py-20">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2">The ReatorAI Impact</h2>
+            <p className="text-muted-foreground">Real results from real creators</p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="text-center group">
+              <div className="flex items-center justify-center mb-3">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/80 dark:from-primary dark:to-primary/70 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
+                <NumberTicker value={1000} />
+                <span>+</span>
+              </div>
+              <div className="text-lg font-semibold mb-1">Creators</div>
+              <div className="text-sm text-muted-foreground">Using ReatorAI daily</div>
+            </div>
+
+            <div className="text-center group">
+              <div className="flex items-center justify-center mb-3">
+                <Clock className="h-8 w-8 text-primary/80 dark:text-primary/90" />
+              </div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary/80 via-accent to-primary/80 dark:from-primary/90 dark:via-accent/90 dark:to-primary/90 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
+                <div className="flex items-baseline justify-center gap-2">
+                  <NumberTicker value={60} />
+                  <span className="text-2xl">→</span>
+                  <NumberTicker value={10} />
+                  <span className="text-xl">min</span>
+                </div>
+              </div>
+              <div className="text-lg font-semibold mb-1">Research Time</div>
+              <div className="text-sm text-muted-foreground">Down from 60 minutes</div>
+            </div>
+
+            <div className="text-center group">
+              <div className="flex items-center justify-center mb-3">
+                <TrendingUp className="h-8 w-8 text-accent dark:text-accent/90" />
+              </div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent to-primary/80 dark:from-accent/90 dark:to-primary/80 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
+                <NumberTicker value={2} />
+                <span>x+</span>
+              </div>
+              <div className="text-lg font-semibold mb-1">Outlier Detection</div>
+              <div className="text-sm text-muted-foreground">Performance threshold</div>
+            </div>
+
+            <div className="text-center group">
+              <div className="flex items-center justify-center mb-3">
+                <Zap className="h-8 w-8 text-accent/80 dark:text-accent/70" />
+              </div>
+              <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent/80 to-accent dark:from-accent/70 dark:to-accent/90 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
+                <NumberTicker value={50} />
+                <span>hrs</span>
+              </div>
+              <div className="text-lg font-semibold mb-1">Saved Per Month</div>
+              <div className="text-sm text-muted-foreground">For active creators</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section - Bento Grid */}
-      <section id="features" className="container px-4 py-24 md:py-32">
+      <section id="features" className="container max-w-7xl mx-auto px-4 py-24 md:py-32">
         <div className="text-center mb-16">
           <Badge className="mb-4" variant="outline">
             Features
@@ -127,113 +178,60 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {/* Feature 1 - Large */}
-          <Card className="relative md:col-span-2 group hover:shadow-xl transition-shadow overflow-hidden border-border/50">
-            <BorderBeam size={200} duration={8} delay={0} colorFrom="#3b82f6" colorTo="#8b5cf6" />
-            <CardContent className="p-8">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4 group-hover:scale-110 transition-transform">
-                    <Video className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-2">Outlier Detection</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Automatically find videos performing 2x+ better than average. Our AI analyzes view patterns to surface hidden gems before they trend.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">Smart Algorithm</Badge>
-                    <Badge variant="secondary">Real-time Tracking</Badge>
-                    <Badge variant="secondary">Multi-channel</Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <BentoGrid className="lg:grid-rows-3">
+          <BentoCard
+            name="Outlier Detection"
+            className="col-span-3 lg:col-span-2"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/20 to-transparent dark:from-primary/10 dark:via-accent/10 dark:to-transparent" />
+            }
+            Icon={Video}
+            description="Automatically find videos performing 2x+ better than average. Our AI analyzes view patterns to surface hidden gems before they trend."
+            href="#how-it-works"
+            cta="Learn more"
+          />
 
-          {/* Feature 2 */}
-          <Card className="relative group hover:shadow-xl transition-shadow border-border/50 overflow-hidden">
-            <BorderBeam size={150} duration={6} delay={2} colorFrom="#8b5cf6" colorTo="#ec4899" />
-            <CardContent className="p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10 mb-4 group-hover:scale-110 transition-transform">
-                <Target className="h-6 w-6 text-purple-500" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Watchlists</h3>
-              <p className="text-muted-foreground">
-                Organize channels by niche. Track unlimited channels and create custom watchlists for different content categories.
-              </p>
-            </CardContent>
-          </Card>
+          <BentoCard
+            name="Watchlists"
+            className="col-span-3 lg:col-span-1"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-primary/20 to-transparent dark:from-accent/10 dark:via-primary/10 dark:to-transparent" />
+            }
+            Icon={Target}
+            description="Organize channels by niche. Track unlimited channels and create custom watchlists for different content categories."
+            href="#how-it-works"
+            cta="Explore"
+          />
 
-          {/* Feature 3 */}
-          <Card className="relative group hover:shadow-xl transition-shadow border-border/50 overflow-hidden">
-            <BorderBeam size={150} duration={6} delay={4} colorFrom="#ec4899" colorTo="#f97316" />
-            <CardContent className="p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-pink-500/10 mb-4 group-hover:scale-110 transition-transform">
-                <BarChart3 className="h-6 w-6 text-pink-500" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">AI Analysis</h3>
-              <p className="text-muted-foreground">
-                Understand why videos went viral. Get detailed breakdowns of hooks, storytelling, and emotional triggers.
-              </p>
-            </CardContent>
-          </Card>
+          <BentoCard
+            name="AI Analysis"
+            className="col-span-3 lg:col-span-1"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-accent/30 to-transparent dark:from-accent/10 dark:via-accent/15 dark:to-transparent" />
+            }
+            Icon={BarChart3}
+            description="Understand why videos went viral. Get detailed breakdowns of hooks, storytelling, and emotional triggers."
+            href="#how-it-works"
+            cta="See analysis"
+          />
 
-          {/* Feature 4 - Large */}
-          <Card className="relative md:col-span-2 group hover:shadow-xl transition-shadow overflow-hidden border-border/50">
-            <BorderBeam size={200} duration={8} delay={3} colorFrom="#10b981" colorTo="#3b82f6" />
-            <CardContent className="p-8">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-500/10 mb-4 group-hover:scale-110 transition-transform">
-                    <FileText className="h-6 w-6 text-green-500" />
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-2">Script Generation</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Generate 60-90 second scripts using 9 hook formats and 7 storytelling frameworks. Sounds like you, not AI.
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">Custom writing style</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">Viral frameworks</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">Platform optimized</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">Instant generation</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Feature 5 */}
-          <Card className="relative group hover:shadow-xl transition-shadow border-border/50 overflow-hidden">
-            <BorderBeam size={150} duration={6} delay={1} colorFrom="#f97316" colorTo="#eab308" />
-            <CardContent className="p-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/10 mb-4 group-hover:scale-110 transition-transform">
-                <Clock className="h-6 w-6 text-orange-500" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Save 50 Hours/Month</h3>
-              <p className="text-muted-foreground">
-                Automate your research workflow. From 5-10 hours per week to just 10 minutes per video.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+          <BentoCard
+            name="Script Generation"
+            className="col-span-3 lg:col-span-2"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/15 to-transparent dark:from-primary/10 dark:via-accent/10 dark:to-transparent" />
+            }
+            Icon={FileText}
+            description="Generate 60-90 second scripts using 9 hook formats and 7 storytelling frameworks. Sounds like you, not AI. Custom writing style, viral frameworks, platform optimized."
+            href="#pricing"
+            cta="Start creating"
+          />
+        </BentoGrid>
       </section>
 
       {/* How It Works Section */}
       <section id="how-it-works" className="relative border-y border-border/40 bg-muted/30">
-        <div className="container px-4 py-24 md:py-32">
+        <div className="container max-w-6xl mx-auto px-4 py-24 md:py-32">
           <div className="text-center mb-16">
             <Badge className="mb-4" variant="outline">
               Simple Process
@@ -247,54 +245,363 @@ export default function Home() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="relative overflow-hidden border-border/50 hover:shadow-xl transition-all group">
+              <CardContent className="p-6">
+                <div className="absolute top-0 right-0 text-8xl font-bold text-muted/10 -mr-4 -mt-4">
+                  01
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 mb-4 group-hover:scale-110 transition-transform relative z-10">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 relative z-10">
+                  Build Watchlists
+                </h3>
+                <p className="text-muted-foreground relative z-10">
+                  Track your favorite channels across YouTube. Create unlimited watchlists organized by niche.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="relative overflow-hidden border-border/50 hover:shadow-xl transition-all group">
+              <CardContent className="p-6">
+                <div className="absolute top-0 right-0 text-8xl font-bold text-muted/10 -mr-4 -mt-4">
+                  02
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 mb-4 group-hover:scale-110 transition-transform relative z-10">
+                  <TrendingUp className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 relative z-10">
+                  Find Outliers
+                </h3>
+                <p className="text-muted-foreground relative z-10">
+                  Our AI automatically detects videos performing 2x+ better with advanced filtering and search.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="relative overflow-hidden border-border/50 hover:shadow-xl transition-all group">
+              <CardContent className="p-6">
+                <div className="absolute top-0 right-0 text-8xl font-bold text-muted/10 -mr-4 -mt-4">
+                  03
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 dark:bg-accent/20 mb-4 group-hover:scale-110 transition-transform relative z-10">
+                  <BarChart3 className="h-6 w-6 text-accent" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 relative z-10">
+                  Understand Why
+                </h3>
+                <p className="text-muted-foreground relative z-10">
+                  Get AI-powered analysis of viral patterns, hooks, storytelling techniques, and emotional triggers.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="relative overflow-hidden border-border/50 hover:shadow-xl transition-all group">
+              <CardContent className="p-6">
+                <div className="absolute top-0 right-0 text-8xl font-bold text-muted/10 -mr-4 -mt-4">
+                  04
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 dark:bg-accent/20 mb-4 group-hover:scale-110 transition-transform relative z-10">
+                  <FileText className="h-6 w-6 text-accent" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 relative z-10">
+                  Write Scripts
+                </h3>
+                <p className="text-muted-foreground relative z-10">
+                  Generate winning 60-90 second scripts with 9 hook formats and 7 storytelling frameworks.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Demo Section */}
+      <section id="demo" className="relative overflow-hidden border-b border-border/40">
+        <DotPattern className="opacity-30" />
+        <div className="container max-w-5xl mx-auto relative z-10 px-4 py-24 md:py-32">
+          <div className="text-center mb-16">
+            <Badge className="mb-4" variant="outline">
+              See It In Action
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              How ReatorAI Works
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              From channel tracking to script generation in one seamless flow
+            </p>
+          </div>
+
+          <div ref={containerRef} className="relative flex h-[300px] w-full items-center justify-between px-4">
+            {/* Channel Input */}
+            <div ref={div1Ref} className="relative z-10 transform-gpu">
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 border-2 border-primary group-hover:scale-110 transition-transform">
+                  <Video className="h-8 w-8 text-primary" />
+                </div>
+                <span className="text-sm font-medium">Channel</span>
+              </div>
+            </div>
+
+            {/* Outlier Detection */}
+            <div ref={div2Ref} className="relative z-10 transform-gpu">
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 border-2 border-primary group-hover:scale-110 transition-transform">
+                  <TrendingUp className="h-8 w-8 text-primary" />
+                </div>
+                <span className="text-sm font-medium">Outlier AI</span>
+              </div>
+            </div>
+
+            {/* Analysis */}
+            <div ref={div3Ref} className="relative z-10 transform-gpu">
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/20 border-2 border-accent group-hover:scale-110 transition-transform">
+                  <BarChart3 className="h-8 w-8 text-accent" />
+                </div>
+                <span className="text-sm font-medium">Analysis</span>
+              </div>
+            </div>
+
+            {/* Script Output */}
+            <div ref={div4Ref} className="relative z-10 transform-gpu">
+              <div className="flex flex-col items-center gap-2 group">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/20 border-2 border-accent group-hover:scale-110 transition-transform">
+                  <FileText className="h-8 w-8 text-accent" />
+                </div>
+                <span className="text-sm font-medium">Script</span>
+              </div>
+            </div>
+
+            {/* Animated Beams */}
+            <AnimatedBeam
+              containerRef={containerRef}
+              fromRef={div1Ref}
+              toRef={div2Ref}
+              gradientStartColor={theme === 'dark' ? '#60a5fa' : '#3b82f6'}
+              gradientStopColor={theme === 'dark' ? '#a78bfa' : '#8b5cf6'}
+              duration={3}
+            />
+            <AnimatedBeam
+              containerRef={containerRef}
+              fromRef={div2Ref}
+              toRef={div3Ref}
+              gradientStartColor={theme === 'dark' ? '#a78bfa' : '#8b5cf6'}
+              gradientStopColor={theme === 'dark' ? '#ec4899' : '#ec4899'}
+              duration={3}
+            />
+            <AnimatedBeam
+              containerRef={containerRef}
+              fromRef={div3Ref}
+              toRef={div4Ref}
+              gradientStartColor={theme === 'dark' ? '#ec4899' : '#ec4899'}
+              gradientStopColor={theme === 'dark' ? '#10b981' : '#10b981'}
+              duration={3}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="container max-w-6xl mx-auto px-4 py-24 md:py-32">
+        <div className="text-center mb-16">
+          <Badge className="mb-4" variant="outline">
+            Pricing
+          </Badge>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+            Simple, Transparent Pricing
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            Start free, upgrade when you're ready
+          </p>
+        </div>
+
+        <div className="grid gap-8 md:grid-cols-3">
+          {/* Free Plan */}
+          <Card className="relative overflow-hidden border-border/50 hover:shadow-xl transition-all">
+            <CardContent className="p-8">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold mb-2">Free</h3>
+                <div className="text-4xl font-bold mb-2">$0</div>
+                <div className="text-sm text-muted-foreground">per month</div>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span>10 scripts per month</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span>20 analyses per month</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span>5 channels max</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span>Basic support</span>
+                </li>
+              </ul>
+
+              <Link href="/signup">
+                <Button className="w-full" variant="outline">
+                  Get Started
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Pro Plan */}
+          <Card className="relative overflow-hidden border-2 border-primary hover:shadow-2xl transition-all scale-105">
+            <ShineBorder
+              borderWidth={2}
+              duration={10}
+              shineColor={theme === 'dark'
+                ? ["#60a5fa", "#a78bfa", "#ec4899"]
+                : ["#3b82f6", "#8b5cf6", "#ec4899"]}
+            />
+            <CardContent className="p-8">
+              <Badge className="mb-4">Most Popular</Badge>
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold mb-2">Pro</h3>
+                <div className="text-4xl font-bold mb-2">$19</div>
+                <div className="text-sm text-muted-foreground">per month</div>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">50 scripts per month</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">Unlimited analyses</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">25 channels</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">Custom writing style</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span>Priority support</span>
+                </li>
+              </ul>
+
+              <Link href="/signup">
+                <Button className="w-full">
+                  Get Started
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Premium Plan */}
+          <Card className="relative overflow-hidden border-border/50 hover:shadow-xl transition-all">
+            <BorderBeam
+              size={200}
+              duration={10}
+              colorFrom={theme === 'dark' ? '#a78bfa' : '#8b5cf6'}
+              colorTo={theme === 'dark' ? '#ec4899' : '#ec4899'}
+            />
+            <CardContent className="p-8">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold mb-2">Premium</h3>
+                <div className="text-4xl font-bold mb-2">$49</div>
+                <div className="text-sm text-muted-foreground">per month</div>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">Unlimited scripts</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">Unlimited analyses</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">Unlimited channels</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">Custom writing styles</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">Priority support</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                  <span className="font-semibold">API access</span>
+                </li>
+              </ul>
+
+              <Link href="/signup">
+                <Button className="w-full" variant="outline">
+                  Get Started
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="relative border-y border-border/40 bg-muted/30">
+        <div className="container max-w-6xl mx-auto px-4 py-24 md:py-32">
+          <div className="text-center mb-16">
+            <Badge className="mb-4" variant="outline">
+              Testimonials
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              What Creators Are Saying
+            </h2>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
             {[
               {
-                step: "01",
-                title: "Build Watchlists",
-                description: "Track your favorite channels across YouTube. Create unlimited watchlists organized by niche.",
-                icon: Users,
-                color: "blue",
+                quote: "Cut my research time by 80%. I'm now posting 3x more content and growing faster than ever!",
+                author: "LAZY SANDY",
+                handle: "@lazysandyinfo",
+                subscribers: "500K+ subscribers",
+                initial: "L",
               },
               {
-                step: "02",
-                title: "Find Outliers",
-                description: "Our AI automatically detects videos performing 2x+ better with advanced filtering and search.",
-                icon: TrendingUp,
-                color: "purple",
+                quote: "Found 10 viral video ideas in minutes. The AI analysis is spot-on and the scripts sound like me!",
+                author: "Tech Explainer",
+                handle: "@techexplain",
+                subscribers: "1M+ subscribers",
+                initial: "T",
               },
               {
-                step: "03",
-                title: "Understand Why",
-                description: "Get AI-powered analysis of viral patterns, hooks, storytelling techniques, and emotional triggers.",
-                icon: BarChart3,
-                color: "pink",
+                quote: "The scripts don't sound like AI at all. My audience thinks I write everything from scratch!",
+                author: "Science Daily",
+                handle: "@sciencedaily",
+                subscribers: "2M+ subscribers",
+                initial: "S",
               },
-              {
-                step: "04",
-                title: "Write Scripts",
-                description: "Generate winning 60-90 second scripts with 9 hook formats and 7 storytelling frameworks.",
-                icon: FileText,
-                color: "green",
-              },
-            ].map((item, index) => (
-              <Card
-                key={index}
-                className="relative overflow-hidden border-border/50 hover:shadow-xl transition-all group"
-              >
-                <BorderBeam size={150} duration={7} delay={index * 1.5} borderWidth={1.5} />
+            ].map((testimonial, index) => (
+              <Card key={index} className="border-border/50 hover:shadow-xl transition-all">
                 <CardContent className="p-6">
-                  <div className="absolute top-0 right-0 text-8xl font-bold text-muted/10 -mr-4 -mt-4">
-                    {item.step}
+                  <p className="text-lg mb-6 italic">"{testimonial.quote}"</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground font-bold text-lg shrink-0">
+                      {testimonial.initial}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold truncate">{testimonial.author}</p>
+                      <p className="text-sm text-muted-foreground truncate">{testimonial.handle}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{testimonial.subscribers}</p>
+                    </div>
                   </div>
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg bg-${item.color}-500/10 mb-4 group-hover:scale-110 transition-transform relative z-10`}>
-                    <item.icon className={`h-6 w-6 text-${item.color}-500`} />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 relative z-10">
-                    {item.title}
-                  </h3>
-                  <p className="text-muted-foreground relative z-10">
-                    {item.description}
-                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -302,186 +609,89 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="container px-4 py-24 md:py-32">
-        <div className="grid gap-8 md:grid-cols-3">
-          <div className="text-center group">
-            <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
-              <NumberTicker value={10} />
-              <span>min</span>
-            </div>
-            <div className="text-xl font-semibold mb-1">Research Time</div>
-            <div className="text-sm text-muted-foreground">Down from 60 minutes</div>
-          </div>
-          <div className="text-center group">
-            <div className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
-              <NumberTicker value={2} />
-              <span>x+</span>
-            </div>
-            <div className="text-xl font-semibold mb-1">Performance Boost</div>
-            <div className="text-sm text-muted-foreground">Outlier detection threshold</div>
-          </div>
-          <div className="text-center group">
-            <div className="text-5xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
-              <NumberTicker value={50} />
-              <span>hrs</span>
-            </div>
-            <div className="text-xl font-semibold mb-1">Saved Per Month</div>
-            <div className="text-sm text-muted-foreground">For active creators</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof Section */}
-      <section className="relative py-24 md:py-32 border-y border-border/40 bg-muted/30 overflow-hidden">
-        <div className="container px-4 mb-12">
-          <div className="text-center">
-            <Badge className="mb-4" variant="outline">
-              Trusted by Creators
-            </Badge>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Join Content Creators Who Are Growing Faster
-            </h2>
-          </div>
-        </div>
-
-        <Marquee pauseOnHover className="[--duration:20s]">
-          {[
-            { name: "LAZY SANDY", handle: "@lazysandyinfo", category: "Science & Education", followers: "500K+" },
-            { name: "Tech Explainer", handle: "@techexplain", category: "Technology", followers: "1M+" },
-            { name: "History Shorts", handle: "@historyshorts", category: "Educational", followers: "750K+" },
-            { name: "Science Daily", handle: "@sciencedaily", category: "Science", followers: "2M+" },
-            { name: "Quick Facts", handle: "@quickfacts", category: "General Knowledge", followers: "1.5M+" },
-            { name: "Geo Explorer", handle: "@geoexplorer", category: "Geography", followers: "600K+" },
-          ].map((creator, index) => (
-            <Card key={index} className="w-[300px] shrink-0 border-border/50 bg-background/95 backdrop-blur">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-lg">
-                    {creator.name[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate">{creator.name}</p>
-                    <p className="text-sm text-muted-foreground truncate">{creator.handle}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="secondary" className="text-xs">{creator.category}</Badge>
-                      <span className="text-xs text-muted-foreground">{creator.followers}</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </Marquee>
-
-        <Marquee reverse pauseOnHover className="[--duration:20s] mt-4">
-          {[
-            "YouTube Shorts", "TikTok", "Instagram Reels", "Facebook Shorts",
-            "Educational Content", "Science Videos", "History Shorts", "Tech Reviews"
-          ].map((platform, index) => (
-            <Badge key={index} variant="outline" className="px-6 py-3 text-base shrink-0">
-              {platform}
-            </Badge>
-          ))}
-        </Marquee>
-      </section>
-
-      {/* CTA Section */}
-      <section id="pricing" className="relative overflow-hidden border-y border-border/40 bg-gradient-to-b from-background to-muted/30">
+      {/* Final CTA Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-background to-muted/30">
         <DotPattern className="opacity-40" glow />
-        <div className="container relative z-10 px-4 py-24 md:py-32">
-          <div className="relative mx-auto max-w-3xl">
-            <Card className="relative overflow-hidden border-2 bg-background/50 backdrop-blur-xl">
-              <BorderBeam size={250} duration={10} delay={0} />
-              <CardContent className="p-12 text-center">
-                <Badge className="mb-6" variant="outline">
-                  <Sparkles className="mr-1 h-3 w-3" />
-                  Get Started Today
-                </Badge>
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Ready to Create Viral Content?
-                </h2>
-                <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-                  Join content creators who are saving hours every week and growing their channels faster with AI-powered insights.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Link href="/signup">
-                    <ShimmerButton
-                      className="text-base font-semibold px-10 py-7"
-                      shimmerColor="#60a5fa"
-                      background="linear-gradient(to right, #3b82f6, #8b5cf6)"
-                    >
-                      <span className="flex items-center gap-2">
-                        Start Free Trial
-                        <ArrowRight className="h-5 w-5" />
-                      </span>
-                    </ShimmerButton>
-                  </Link>
-                  <Link href="/login">
-                    <Button size="lg" variant="outline" className="text-base px-10 py-7">
-                      Sign In
-                    </Button>
-                  </Link>
+        <div className="container max-w-4xl mx-auto relative z-10 px-4 py-24 md:py-32">
+          <Card className="relative overflow-hidden border-2 bg-background/50 backdrop-blur-xl">
+            <BorderBeam size={250} duration={10} delay={0} />
+            <CardContent className="p-12 text-center">
+              <Badge className="mb-6" variant="outline">
+                <Sparkles className="mr-1 h-3 w-3" />
+                Get Started Today
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6 bg-gradient-to-r from-primary via-accent to-primary dark:from-primary/90 dark:via-accent/90 dark:to-primary/90 bg-clip-text text-transparent">
+                Ready to Create Viral Content?
+              </h2>
+              <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+                Join content creators who are saving hours every week and growing their channels faster with AI-powered insights.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Link href="/signup">
+                  <ShimmerButton
+                    className="text-base font-semibold px-10 py-7"
+                    shimmerColor={theme === 'dark' ? '#60a5fa' : '#3b82f6'}
+                    background={theme === 'dark'
+                      ? "linear-gradient(to right, #60a5fa, #a78bfa)"
+                      : "linear-gradient(to right, #3b82f6, #8b5cf6)"}
+                  >
+                    <span className="flex items-center gap-2">
+                      Start Free Trial
+                      <ArrowRight className="h-5 w-5" />
+                    </span>
+                  </ShimmerButton>
+                </Link>
+                <Link href="/login">
+                  <Button size="lg" variant="outline" className="text-base px-10 py-7">
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+                  10 free scripts per month
                 </div>
-                <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    10 free scripts per month
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    20 free analyses per month
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    No credit card required
-                  </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+                  20 free analyses per month
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+                  No credit card required
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Minimal Footer */}
       <footer className="border-t border-border/40">
-        <div className="container px-4 py-12">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div className="md:col-span-1">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <span className="text-lg font-bold">ReatorAI</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                AI-powered viral content research and script generation for creators.
-              </p>
+        <div className="container max-w-4xl mx-auto px-4 py-8">
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <span className="text-lg font-bold">ReatorAI</span>
             </div>
-            <div>
-              <h3 className="font-semibold mb-3">Product</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#features" className="hover:text-foreground transition-colors">Features</Link></li>
-                <li><Link href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</Link></li>
-                <li><Link href="#pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
-              </ul>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              AI-powered viral content research and script generation for creators
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+              <Link href="#features" className="hover:text-foreground transition-colors">Features</Link>
+              <Link href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</Link>
+              <Link href="#pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+              <span className="text-border">|</span>
+              <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
+              <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
+              <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+              <span className="text-border">|</span>
+              <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
             </div>
-            <div>
-              <h3 className="font-semibold mb-3">Company</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/about" className="hover:text-foreground transition-colors">About</Link></li>
-                <li><Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
-                <li><Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-3">Legal</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-border/40 text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 ReatorAI. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground pt-4 border-t border-border/40 max-w-md mx-auto">
+              &copy; 2025 ReatorAI. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

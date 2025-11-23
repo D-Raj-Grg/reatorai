@@ -42,9 +42,10 @@ export default function ChannelsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 px-4 lg:px-6">
+        <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Channels</h1>
           <p className="text-muted-foreground">
@@ -109,21 +110,27 @@ export default function ChannelsPage() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Channels List */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="px-4 lg:px-6">
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
         </div>
       ) : channels && channels.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="px-4 lg:px-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {channels.map((channel) => (
             <ChannelCard key={channel.id} channel={channel} />
           ))}
+          </div>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="px-4 lg:px-6">
+          <div className="space-y-8">
           {/* Empty State Header */}
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="rounded-full bg-muted p-6 mb-4">
@@ -203,6 +210,7 @@ export default function ChannelsPage() {
                 </TabsContent>
               ))}
             </Tabs>
+          </div>
           </div>
         </div>
       )}

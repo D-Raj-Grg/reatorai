@@ -65,9 +65,10 @@ export default function WatchlistsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 px-4 lg:px-6">
+        <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Watchlists</h1>
           <p className="text-muted-foreground">
@@ -177,15 +178,19 @@ export default function WatchlistsPage() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Watchlists List */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="px-4 lg:px-6">
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
         </div>
       ) : watchlists && watchlists.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="px-4 lg:px-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {watchlists.map((watchlist) => (
             <Link key={watchlist.id} href={`/watchlists/${watchlist.id}`}>
               <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
@@ -247,9 +252,11 @@ export default function WatchlistsPage() {
               </Card>
             </Link>
           ))}
+          </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="px-4 lg:px-6">
+          <div className="flex flex-col items-center justify-center py-12 text-center">
           <div className="rounded-full bg-muted p-6 mb-4">
             <Folder className="h-12 w-12 text-muted-foreground" />
           </div>
@@ -261,6 +268,7 @@ export default function WatchlistsPage() {
             <Plus className="mr-2 h-4 w-4" />
             Create Your First Watchlist
           </Button>
+          </div>
         </div>
       )}
     </div>

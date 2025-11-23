@@ -62,10 +62,10 @@ const mainNavItems = [
   },
 ]
 
-export  async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { data: watchlists } = useWatchlists()
-  const { user } = await useUser()
+  const { user } = useUser()
   const [watchlistsOpen, setWatchlistsOpen] = React.useState(true)
 
   return (
