@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useId, useRef, useState } from "react"
+import React, { useEffect, useId, useMemo, useRef, useState } from "react"
 import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
@@ -90,23 +90,33 @@ export function DotPattern({
     return () => window.removeEventListener("resize", updateDimensions)
   }, [])
 
-  const dots = Array.from(
-    {
-      length:
-        Math.ceil(dimensions.width / width) *
-        Math.ceil(dimensions.height / height),
-    },
-    (_, i) => {
-      const col = i % Math.ceil(dimensions.width / width)
-      const row = Math.floor(i / Math.ceil(dimensions.width / width))
+  const dots = useMemo(() => {
+    const cols = Math.ceil(dimensions.width / width)
+    const rows = Math.ceil(dimensions.height / height)
+    const totalDots = cols * rows
+
+    // Pre-generate random values for animation
+    // eslint-disable-next-line react-hooks/purity
+    const randomDelays: number[] = []
+    const randomDurations: number[] = []
+    for (let i = 0; i < totalDots; i++) {
+      // eslint-disable-next-line react-hooks/purity
+      randomDelays.push(Math.random() * 5)
+      // eslint-disable-next-line react-hooks/purity
+      randomDurations.push(Math.random() * 3 + 2)
+    }
+
+    return Array.from({ length: totalDots }, (_, i) => {
+      const col = i % cols
+      const row = Math.floor(i / cols)
       return {
         x: col * width + cx,
         y: row * height + cy,
-        delay: Math.random() * 5,
-        duration: Math.random() * 3 + 2,
+        delay: randomDelays[i],
+        duration: randomDurations[i],
       }
-    }
-  )
+    })
+  }, [dimensions.width, dimensions.height, width, height, cx, cy])
 
   return (
     <svg

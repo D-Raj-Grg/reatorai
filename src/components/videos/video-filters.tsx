@@ -235,7 +235,7 @@ export function VideoFilters({
         <div className="flex flex-wrap gap-2">
           {filters.search && (
             <Badge variant="secondary">
-              Search: "{filters.search}"
+              Search: &quot;{filters.search}&quot;
               <button
                 onClick={clearSearch}
                 className="ml-2 hover:text-destructive"

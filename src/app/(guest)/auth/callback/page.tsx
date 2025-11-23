@@ -18,20 +18,20 @@ function AuthCallbackContent() {
     const error = searchParams.get("error")
     const errorDescription = searchParams.get("error_description")
 
-    if (error) {
-      setStatus("error")
-      setMessage(errorDescription || "Verification failed. Please try again.")
-      return
-    }
-
-    if (!code) {
-      setStatus("error")
-      setMessage("Invalid verification link. Please request a new one.")
-      return
-    }
-
     // Exchange code for session
     async function verifyEmail() {
+      if (error) {
+        setStatus("error")
+        setMessage(errorDescription || "Verification failed. Please try again.")
+        return
+      }
+
+      if (!code) {
+        setStatus("error")
+        setMessage("Invalid verification link. Please request a new one.")
+        return
+      }
+
       try {
         const response = await fetch("/api/auth/verify", {
           method: "POST",

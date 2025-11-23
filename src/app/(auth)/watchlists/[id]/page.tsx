@@ -68,7 +68,7 @@ export default function WatchlistDetailPage({
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <h3 className="text-xl font-semibold mb-2">Watchlist not found</h3>
         <p className="text-muted-foreground mb-4">
-          This watchlist may have been deleted or doesn't exist.
+          This watchlist may have been deleted or doesn&apos;t exist.
         </p>
         <Button onClick={() => router.push("/watchlists")}>
           Back to Watchlists
